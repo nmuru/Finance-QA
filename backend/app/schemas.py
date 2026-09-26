@@ -3,11 +3,12 @@ from pydantic import BaseModel, HttpUrl
 
 class AnalyzeRequest(BaseModel):
     company_name: str
-    selected_phases: list[str]
+    query: str = ""
+    selected_phases: list[str] | None = None
     work_id: str | None = None
     provider: str = "openrouter"
     model: str = "openrouter/free"
-    api_key: str
+    api_key: str = ""
     mode: str = "parallel"
     objective: str = "document"
 
