@@ -806,7 +806,7 @@ Question: {query}
 QUERY-SPECIFIC EVIDENCE CONTEXT
 {financial_context}
 
-Before answering, briefly determine the evidence needed. First read the query skill guidance with read_resource using SKILL.md, then retrieve only the evidence needed with the available tools. If a focused skill is relevant, read that skill resource too. Then give the concise final answer.
+Before answering, briefly determine the evidence needed. First read the query skill guidance with read_resource using SKILL.md, then retrieve only the evidence needed with the available tools. If a focused skill is relevant, read that skill resource too. If user documents are listed in the evidence context, treat them as additional read-only evidence and use read_file on the specific document(s) when relevant. Prefer the SEC financial tools for reported financial facts; use uploaded documents for supplemental context or facts not present in the SEC data. Then give the concise final answer.
 """
     return await _run_agent(
         phase="query",
