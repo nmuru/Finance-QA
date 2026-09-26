@@ -777,3 +777,37 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+
+.qa-form {
+  display: grid;
+  gap: 16px;
+}
+
+.qa-field {
+  display: grid;
+  gap: 7px;
+}
+
+.qa-field span {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.qa-field input,
+.qa-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 13px;
+  border: 1px solid #cfd4da;
+  border-radius: 9px;
+  outline: none;
+  color: var(--text);
+  background: white;
+  font: inherit;
+}
+
+.qa-field textarea {
+  resize: vertical;
+  min-height: 140px;
+}
