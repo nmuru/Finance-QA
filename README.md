@@ -1,119 +1,224 @@
-# SDLC Dossier
+# RAG Finance QA
 
-ReverseEngineer-SDLC turns a GitHub repository into a progressive software-engineering dossier across 11 SDLC phases. The frontend submits selected phases to the backend, which clones the repository once, builds deterministic repository intelligence, performs semantic research, then runs the selected phase agents and renders their Markdown output.
+RAG Finance QA is an agentic financial question-answering application built to explore retrieval-augmented generation for financial analysis and benchmark evaluation.
 
-## V1 scope
+The current version uses an agent to decide what evidence is needed for a user's financial question, retrieve only the relevant evidence through read-only tools, and produce an evidence-based answer.
 
-The current version is intentionally a practical first release. It supports public GitHub repositories, explicit phase selection, progressive streaming of completed phases, rerunning selected phases with the same `work_id`, and OpenRouter/OpenAI providers through the OpenAI Agents SDK.
+The key experiment is **Agentic RAG without a traditional vector-search layer**. Instead of embedding the entire evidence corpus and relying on similarity search, the agent can directly address structured SEC financial data and, when supplied, user documents in a temporary workspace.
 
-The backend currently accepts a maximum repository size of 500 MB by default. Phase-agent execution is bounded to 15 turns by default. `phases_per_batch` defaults to 1 and parallel batch execution is the default mode. These limits are configuration values and can be changed through the backend settings, but larger repositories or larger execution budgets increase runtime and model usage.
+This is an evaluation-oriented project rather than a production financial-advice application.
 
-An analysis performs more model work than the number of final dossier phases alone. There is one repository-level semantic research request, one phase-level semantic research request per selected phase, one phase-agent run per selected phase, and a separate rendering request for each completed phase. Actual token consumption and cost depend on repository size, selected phases, model/provider behavior, retries, and provider pricing or free-tier limits.
+## What is different about this version?
 
-## Providers and model input
+The application started as a codebase-analysis / financial-dossier workflow. The current V1 query path has been simplified into a focused financial QA agent.
 
-V1 intentionally exposes only the providers implemented by the backend: OpenRouter and OpenAI. The frontend should not advertise providers that the backend cannot route. The model field is passed through to the selected provider. There is no automatic model fallback in this V1 release. A rate limit, unavailable model, authentication failure, or provider error is surfaced as an analysis failure rather than silently switching to a different model.
+The agent:
 
-## Run control and refresh resilience
+1. Receives a company and a financial question.
+2. Reads the relevant query/financial skill guidance.
+3. Determines what evidence is actually needed.
+4. Retrieves targeted financial evidence using the available tools.
+5. Prefers SEC financial data for reported financial facts.
+6. Can read optional user-provided documents directly from the temporary workspace.
+7. Distinguishes reported facts, calculations, and analytical inference.
+8. Returns a concise answer with relevant periods and figures.
 
-A running analysis is independent of the browser tab. The workspace stores the `work_id` and lightweight run metadata in browser local storage; API keys are not stored. On refresh, the frontend reconnects to the backend status endpoint for that `work_id`, recovers completed phase artifacts, and resumes the same progressive-results view rather than returning to the initial setup screen.
+The previous multi-phase financial dossier pipeline is still retained in the codebase for possible future integration; it is not used by the current /api/analyze query path.
 
-The workspace includes a **Stop analysis** control. It cancels the selected analysis run only; it does not stop the FastAPI web server or other users' work. Stop requests prevent subsequent phases from starting and propagate cancellation into active phase-agent and renderer requests. Completed phase results remain available and the user can return to the main page. If a browser is closed after a stop request, the backend still finishes cancellation independently.
+## Why benchmark it?
 
-The progressive-results state remains the primary UI: completed phases stay readable while remaining phases continue, including the `10 of 11 phases have completed` case. Refresh recovery and stopping are additive to that experience.
+Simple financial QA is increasingly easy for strong general-purpose models, so the interesting question is not simply whether an LLM can answer a finance question.
 
-## Output retention and runtime mode
+This project is intended to test whether a relatively small agentic retrieval architecture can reliably solve harder financial QA tasks by choosing and retrieving the right evidence.
 
-Run diagnostics and generated phase artifacts are written under `output-content/{work_id}`. The generic `runtime_mode` setting controls their lifecycle and defaults to `evaluation` so V1 evaluation data is retained.
+Initial experiments include questions from:
 
-- `evaluation` — retain per-run output for diagnostics, evaluation, and troubleshooting.
-- `production` — allow an explicit UI close/cleanup request to remove that run's output. If the run is still active, the backend cancels it first and removes the folder after cancellation completes.
+- **FinanceBench** — the PatronusAI financial QA benchmark.
+- **BigBench Finance / related finance benchmark datasets**.
+- Custom difficult financial questions requiring multi-step reasoning over financial statements and numerical evidence.
 
-Set `RUNTIME_MODE=production` in the backend environment when production retention behavior is desired. Browser refresh does not trigger cleanup; cleanup is scoped to the specific `work_id`. The browser does not provide a reliable signal that distinguishes closing a tab/window from refreshing it, so cleanup should be initiated by an explicit UI close action rather than by `pagehide`/`beforeunload` alone.
+Some difficult benchmark questions can also expose practical agent limitations such as context limits, token limits, or maximum-turn limits. Those failure modes are part of the evaluation rather than being hidden.
 
-## Rate limits and failures
+The current results are exploratory. A systematic benchmark run is still needed before making claims about overall accuracy or superiority over other retrieval approaches.
 
-The analysis endpoint is an event stream. Backend validation and execution errors are returned as an `analysis_failed` event so the frontend can display a useful message instead of waiting indefinitely. Renderer requests retry HTTP 429 responses with bounded backoff before reporting failure.
+## RAG without vector search
 
-This is a V1 demo/evaluation application and not every edge case has been exhaustively tested. If a phase run encounters an unexpected failure or repository-access error, do not treat the existing completed work as lost: return to the main setup page and rerun the affected phase, or start a new browser tab/workspace. Completed phase artifacts should remain available in the workspace and can be downloaded while later phases are still running.
+This project does not currently build a vector database for financial evidence.
 
-When a run fails after some phases have completed, completed phase results remain available in the current workspace. Select a completed phase to inspect it, or use the setup screen to explicitly select a phase again and rerun it. A rerun replaces that phase's `agent-output.md` and `raw.md` artifacts for the same `work_id`.
+The retrieval strategy is based on **tool-addressable evidence**:
 
-## Mermaid diagrams
+- SEC/company financial data is downloaded into the run workspace.
+- Financial statements and structured data can be retrieved through dedicated tools.
+- Targeted XBRL/JSON retrieval can be used when appropriate.
+- Optional supporting documents are copied into the temporary workspace.
+- The agent can use list_files and read_file to inspect those documents when relevant.
 
-Phase documents may contain fenced `mermaid` code blocks. The frontend renders these diagrams client-side with Mermaid. When Mermaid cannot parse a diagram, the UI shows the source instead of leaving the result blank. This is intended to make diagram failures diagnosable while preserving the underlying documentation.
+The important distinction is that this is not claiming vector search is obsolete. It is an experiment in whether an agent can perform useful RAG over structured and directly addressable evidence without adding an embedding/vector-search layer.
 
-## Demo
+## Optional supporting documents
 
-The Vercel Commerce example is pre-generated and stored under `frontend/public/vercel-demo/`. It is documentation only and does not consume API credits when viewed. Real analyses use the backend pipeline and the API credentials supplied with the request.
+Supporting documents are optional.
 
-## Security and workspace model
+For benchmark experiments, the intended baseline can be **SEC-only**, allowing the agent to answer from the financial evidence it retrieves itself.
 
-GitHub repositories are cloned into a temporary read-only analysis workspace for a run and are removed when that run finishes. Phase agents receive repository tools that restrict paths to the cloned repository and expose file listing, file reads, and text search without write operations. API keys are supplied per request and are not persisted by the frontend.
+Users can also upload additional documents when testing questions that require information outside the SEC evidence. Uploaded files are:
 
-## Diagnostics
+- limited to 10 files per query;
+- limited to 5 MB per file;
+- limited to 20 MB combined;
+- copied into the run's temporary uploaded-documents/ workspace;
+- available to the agent through the existing read-only file tools;
+- not embedded into a vector database.
 
-Resource diagnostics are enabled in the current diagnostics baseline. The backend records runtime samples and phase lifecycle events as JSONL under the run's output directory. Agent diagnostics also record phase trace identifiers, model/provider names, observed agent turns, tool-call counts, and timing information in backend logs. Renderer diagnostics now record renderer start, completion, retry, failure, cancellation, attempt number, model, phase, and elapsed seconds without logging prompts or generated content.
+## Providers and models
 
-This information is intended to support engineering diagnostics and performance investigation. It is not presented as a claim that the application can reconstruct every provider-side billing or execution metric.
+The backend supports the provider/model configuration implemented by the application. OpenRouter can be used to experiment with different models, which is useful for benchmark comparisons.
+
+The application does not silently switch models when a provider or model fails. Authentication, rate-limit, unavailable-model, and provider errors are surfaced to the user.
+
+Actual performance and token usage depend on the selected model, provider limits, agent instructions, retrieved evidence, and question difficulty.
 
 ## Local development
 
-Start the backend from `backend/` with the project's normal Python environment and start the frontend from `frontend/` with the package manager used by the repository. The frontend currently expects the backend at `http://localhost:8000`.
+This project is currently intended to run locally. It is **not deployed on Vercel**.
 
-Before using the application, provide a provider, model, API key, GitHub repository URL, and one or more SDLC phases. For repeat runs, keep the returned `run_id` and explicitly select phases to rerun within that workspace.
+A local setup is preferable for the current benchmark/evaluation stage because it makes the model, provider, prompts, tools, retrieved evidence, and runtime behavior easier to inspect and reproduce.
 
-## Run locally
+### Requirements
 
-You can simulate the application on your Windows desktop by cloning this repository and running `start.bat`. The script creates the Python virtual environment and installs the backend dependencies from `backend/requirements.txt`, installs the frontend npm dependencies, and starts the FastAPI backend and Next.js frontend.
-
-Before running `start.bat`, make sure the following are installed:
+Install:
 
 - **Git**
-- **Python 3.11+** with `python` available on PATH
-- **Node.js 20.9+** with `npm` available on PATH
+- **Python 3.11+**
+- **Node.js 20.9+**
+- An API key for the AI provider/model you want to use
+- An **EDGAR identity** for SEC access
 
-For the Financial Dossier, SEC access also requires an **EDGAR identity** (your name and email address). Set it in the terminal before starting the application, for example:
+Set your EDGAR identity before starting the backend:
 
-```bat
-set EDGAR_IDENTITY=Your Name your.email@example.com
-```
+    set EDGAR_IDENTITY=Your Name your.email@example.com
 
-You also need an API key for the AI provider used by the application. The easiest way to try the UI without running an analysis is to use the pre-generated INFY and IBM demo data. To run a live financial analysis, enter your provider, model, and API key in the application.
+Use your own name and email address rather than the example above.
 
-After cloning:
+### Quick start on Windows
 
-```bat
-git clone https://github.com/nmuru/Financial-Dossier.git
-cd Financial-Dossier
-set EDGAR_IDENTITY=Your Name your.email@example.com
-start.bat
-```
+Clone the repository:
 
-The frontend runs on the local Next.js development server, normally at **http://localhost:3000**. The backend runs on **http://localhost:8000**.
+    git clone https://github.com/nmuru/Finance-QA.git
+    cd Finance-QA
 
-**Windows note:** the current `start.bat` contains machine-specific paths from the author's development environment. If those paths do not match your machine, use the commands below instead of `start.bat`:
+Then start the application:
 
-```bat
-cd backend
-python -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt
-cd ..\frontend
-npm install
-```
+    set EDGAR_IDENTITY=Your Name your.email@example.com
+    start.bat
 
-Then start the backend in one terminal:
+The frontend normally runs at:
 
-```bat
-cd backend
-set EDGAR_IDENTITY=Your Name your.email@example.com
-.venv\Scripts\python.exe -m uvicorn app.main:app --reload
-```
+**http://localhost:3000**
 
-and the frontend in another:
+The backend normally runs at:
 
-```bat
-cd frontend
-npm run dev
-```
+**http://localhost:8000**
 
+Enter the company, financial question, provider/model configuration, and API key in the application as required by the current UI/settings.
+
+### Manual startup
+
+If start.bat contains paths specific to the author's machine or does not work on your system, start the services manually.
+
+Create the backend environment and install dependencies:
+
+    cd backend
+    python -m venv .venv
+    .venv\Scripts\python.exe -m pip install -r requirements.txt
+
+Start the backend in one terminal:
+
+    cd backend
+    set EDGAR_IDENTITY=Your Name your.email@example.com
+    .venv\Scripts\python.exe -m uvicorn app.main:app --reload
+
+In a second terminal, install and start the frontend:
+
+    cd frontend
+    npm install
+    npm run dev
+
+Open:
+
+**http://localhost:3000**
+
+## Typical benchmark workflow
+
+For a reproducible benchmark experiment:
+
+1. Start the application locally.
+2. Use the benchmark question as the query.
+3. Provide the corresponding company.
+4. Leave supporting documents empty when testing the SEC-only baseline.
+5. Record the final answer and any execution failure.
+6. Repeat with the same model/configuration across the benchmark set.
+7. Compare accuracy as well as failure modes such as context overflow, token limits, and maximum agent turns.
+
+The goal is to evaluate the retrieval-and-agent architecture, not just whether a particular model can answer an isolated question.
+
+## Architecture
+
+At a high level:
+
+    User
+      |
+      v
+    Next.js UI
+      |
+      v
+    FastAPI /api/analyze
+      |
+      v
+    Query Agent
+      |
+      +---- Query / Financial Skills
+      |
+      +---- SEC Financial Tools
+      |
+      +---- Structured XBRL / JSON Retrieval
+      |
+      +---- Optional Uploaded Documents
+      |          |
+      |          +---- list_files
+      |          +---- read_file
+      |
+      v
+    Evidence-based Financial Answer
+
+There is no vector database in this path.
+
+The retrieval mechanism is instead driven by the agent's evidence requirements and the available tools.
+
+## Current limitations
+
+This is a research/demo and benchmark-oriented implementation.
+
+Important limitations include:
+
+- benchmark coverage is still being expanded;
+- systematic accuracy measurements have not yet been published;
+- difficult questions can exceed model context or token limits;
+- agent runs can reach maximum-turn limits;
+- different models may behave very differently on the same question;
+- SEC evidence may be insufficient for questions requiring information outside reported filings;
+- uploaded documents are supplemental evidence rather than a fully indexed document corpus.
+
+These limitations are useful evaluation signals rather than reasons to hide failed runs.
+
+## Project status
+
+The current focus is:
+
+**Agentic RAG + financial tools + benchmark evaluation**
+
+The next stage is to run larger benchmark sets systematically and investigate where the agent succeeds, where it fails, and which retrieval/agent strategies improve reproducibility and accuracy.
+
+Repository:
+
+https://github.com/nmuru/Finance-QA
