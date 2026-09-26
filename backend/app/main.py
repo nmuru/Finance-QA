@@ -8,7 +8,7 @@ from queue import Empty, Queue
 from threading import Lock, Thread
 from typing import Any
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 
@@ -221,12 +221,44 @@ def download_analysis(work_id: str) -> FileResponse:
 
 
 @app.post("/api/analyze")
-def analyze(request: AnalyzeRequest) -> StreamingResponse:
-    """Answer one financial query using the standard query agent."""
-    company_name = request.company_name.strip()
-    query = request.query.strip()
+async def analyze(request: Request) -> StreamingResponse:
+    """Answer one financial query, optionally using uploaded workspace documents."""
+    uploaded_files: list[tuple[str, bytes]] = []
+    content_type = (request.headers.get("content-type") or "").lower()
+
+    if content_type.startswith("multipart/form-data"):
+        form = await request.form()
+        company_name = str(form.get("company_name") or "").strip()
+        query = str(form.get("query") or "").strip()
+        requested_run_id = str(form.get("work_id") or "").strip() or None
+        total_upload_bytes = 0
+
+        for value in form.values():
+            if not isinstance(value, UploadFile):
+                continue
+            if len(uploaded_files) >= 10:
+                raise HTTPException(status_code=413, detail="A maximum of 10 uploaded files is allowed.")
+            filename = (value.filename or "").strip()
+            if not filename:
+                continue
+            content = await value.read()
+            if len(content) > 5 * 1024 * 1024:
+                raise HTTPException(status_code=413, detail=f"Uploaded file '{filename}' exceeds the 5 MB limit.")
+            total_upload_bytes += len(content)
+            if total_upload_bytes > 20 * 1024 * 1024:
+                raise HTTPException(status_code=413, detail="The combined uploaded file size exceeds the 20 MB limit.")
+            uploaded_files.append((filename, content))
+    else:
+        try:
+            payload = await request.json()
+            parsed = AnalyzeRequest.model_validate(payload)
+        except Exception as exc:
+            raise HTTPException(status_code=422, detail="Invalid query request.") from exc
+        company_name = parsed.company_name.strip()
+        query = parsed.query.strip()
+        requested_run_id = parsed.work_id
+
     event_queue: Queue[dict[str, Any]] = Queue()
-    requested_run_id = request.work_id
 
     if not company_name:
         raise HTTPException(status_code=422, detail="company_name cannot be empty")
@@ -239,11 +271,10 @@ def analyze(request: AnalyzeRequest) -> StreamingResponse:
         if existing and existing.snapshot().get("status") in {"running", "cancelling"}:
             raise HTTPException(status_code=409, detail="An analysis with this work ID is already running.")
 
-    provider = (request.provider or settings.model_provider).strip().lower()
-    model = (request.model or settings.agent_model).strip()
+    provider = settings.model_provider.strip().lower()
+    model = settings.agent_model.strip()
     api_key = (
-        request.api_key
-        or (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key)
+        (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key)
         or ""
     ).strip()
 
@@ -281,6 +312,7 @@ def analyze(request: AnalyzeRequest) -> StreamingResponse:
                 api_key=api_key,
                 work_id=resolved_run_id,
                 run_control=control,
+                uploaded_files=uploaded_files,
             )
             if control.is_cancelled():
                 if memory_guard.triggered.is_set():
