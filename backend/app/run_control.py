@@ -23,6 +23,7 @@ class RunControl:
         self._lock = threading.Lock()
         self.status = "running"
         self.company_name = ""
+        self.query = ""
         self.selected_phases: list[str] = []
         self.completed_phases: list[str] = []
         self.failures: list[dict[str, Any]] = []
@@ -31,7 +32,7 @@ class RunControl:
         self.completed_at: str | None = None
         self.last_heartbeat = time.monotonic()
 
-    def initialize(self, *, company_name: str, selected_phases: list[str]) -> None:
+    def initialize(self, *, company_name: str, query: str, selected_phases: list[str]) -> None:
         previous_completed: list[str] = []
         try:
             if self.state_path.is_file():
@@ -44,6 +45,7 @@ class RunControl:
 
         self.status = "running"
         self.company_name = company_name
+        self.query = query
         self.selected_phases = list(selected_phases)
         self.completed_phases = previous_completed
         self.failures = []
@@ -111,6 +113,7 @@ class RunControl:
                 "run_id": self.run_id,
                 "status": self.status,
                 "company_name": self.company_name,
+                "query": self.query,
                 "selected_phases": list(self.selected_phases),
                 "completed_phases": list(self.completed_phases),
                 "failures": list(self.failures),
