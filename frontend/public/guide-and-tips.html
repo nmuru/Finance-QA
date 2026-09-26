@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guide and Tips</title>
+  <style>
+    :root { --bg:#f6f7f9; --card:#fff; --text:#1f2937; --muted:#667085; --border:#e4e7ec; --soft:#f9fafb; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; line-height:1.65; }
+    main { width:min(920px,calc(100% - 32px)); margin:48px auto; }
+    article { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:42px 48px; box-shadow:0 8px 30px rgba(16,24,40,.05); }
+    h1 { margin:0 0 10px; font-size:36px; line-height:1.2; letter-spacing:-.02em; }
+    h2 { margin:38px 0 10px; font-size:23px; line-height:1.3; }
+    h3 { margin:24px 0 8px; font-size:18px; }
+    p { margin:10px 0 16px; }
+    ul,ol { padding-left:24px; }
+    li { margin:7px 0; }
+    .eyebrow { color:var(--muted); font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px; }
+    .intro { color:var(--muted); font-size:17px; margin-bottom:28px; }
+    .callout { background:var(--soft); border:1px solid var(--border); border-radius:12px; padding:18px 20px; margin:22px 0; }
+    .callout strong { display:block; margin-bottom:4px; }
+    a { color:#175cd3; }
+    footer { color:var(--muted); font-size:13px; margin-top:18px; text-align:center; }
+    @media (max-width:700px) { main { margin:20px auto; } article { padding:28px 22px; } h1 { font-size:30px; } }
+  </style>
+</head>
+<body>
+<main><article>
+
+  <div class="eyebrow">ReverseEngineer-SDLC</div>
+  <h1>Guide and Tips</h1>
+
+  <h2>TLDR</h2>
+<ul>
+  <li>Explore using model as 'openrouter/free'. You will be suprised to find the quality of the output. Openrouter might route to different model for every turn within single phase analysis</li>
+  <li>At present, the app supports OpenRouter and OpenAI as model providers. If you have subscription to other providers like Anthropic, you may try the BYOK option in openrouter.</li>
+  <li>The frontend lets you choose between <strong>Document</strong> and <strong>Understand</strong>: use <strong>Document</strong> when you want the SDLC phase to produce the formal artifact, and <strong>Understand</strong> when you want the agent to focus on understanding and explaining the system before producing documentation.</li>
+  <li><strong>Be patient!</strong> A single phase can take around 5 minutes and, depending on the model, repository, and analysis path, may take 20 minutes or more. This is why parallel execution is available. The time required can vary significantly between models. Some models can take substantially longer than others.</li>
+  <li>If you find that one or more phases did not complete, rerun the affected phase. A phase may fail because the agent exceeded its maximum number of turns or encountered another edge-case failure, and it may complete successfully on a subsequent run. Not all failure cases are currently captured and reported precisely by the frontend.</li>
+  <li><strong>After using Review Repo, start any further analysis in a new browser tab/workspace.</strong> This applies whether the Review Repo operation succeeds or fails.</li>
+  <li>You can exit the work anytime by using the <strong>Stop &amp; Exit</strong> button. This stops further analysis requests from being started. However, this would delete the workspace and all completed work will be lost.</li>
+  <li>If you are using <strong>OpenRouter/free</strong> as the model, running more than 2–3 phases at the same time may lead to provider rate-limit problems. Pace the analysis sequentially when necessary.</li>
+  <li><strong>If you see a memory-availability warning, wait and try again later.</strong> The backend has a finite memory capacity, so a temporary memory constraint can prevent a new analysis from starting.</li>
+  <li>Your UI/workspace may expire after some idle hours. Keep downloading completed work as the phases finish so that you do not lose useful results if the workspace expires.</li>
+  <li>Frontier-model token economics: one SDLC phase run with GPT-6 Astra used <strong>12 requests</strong> and cost <strong>$1.87</strong>, while GPT-5.6 Terra used <strong>16 requests</strong> and cost <strong>$0.86</strong>. </li>
+  <li>Have a look at the Vercel and UV Desk samples. The UV Desk samples were created using top frontier models. Note that this app is designed for usage of free models. The output of free models are comparable to that of frontier-model outputs at a fraction of the cost!</li>
+  
+</ul>
+
+  <h2>Features at a glance</h2>
+  <ul>
+    <li><strong>Comprehensive SDLC documentation:</strong> Generate a structured set of SDLC documents from an existing codebase, covering the major aspects needed to understand and work with the software.</li>
+    <li><strong>Application-level understanding:</strong> Use the generated documentation to understand what the application does, how its workflows fit together, and how its technical implementation supports those capabilities.</li>
+    <li><strong>Support for future engineering work:</strong> Use the documentation as a reference for enhancements, bug fixing, maintenance, onboarding, and other work on the existing codebase.</li>
+    <li><strong>Specification-driven AI development:</strong> Refine the generated documentation into an agreed specification that can be used as structured input for future AI-assisted, specification-driven development.</li>
+    <li><strong>Recommendations across phases:</strong> Relevant SDLC phases can provide evidence-based recommendations, while the dedicated <strong>Future Directions</strong> phase provides a broader view of potential next steps.</li>
+    <li><strong>Review Repo:</strong> Use <strong>Review Repo</strong> for a broader review and synthesis of the generated SDLC documentation. It can work with a subset of phase outputs, so you do not have to provide every phase document.</li>
+    <li><strong>Selective analysis and reruns:</strong> Run the phases you need and rerun individual phases when a result needs improvement, without automatically repeating the entire analysis.</li>
+    <li><strong>Progressive results:</strong> View completed phase results as they become available while the remaining analysis continues, with the ability to stop an active analysis when needed.</li>
+    <li><strong>Evidence-oriented analysis:</strong> The workflow combines repository intelligence, targeted research, phase-specific guidance, and repository inspection so generated documentation is grounded in the implementation rather than based only on surface-level code summaries.</li>
+  </ul>
+
+  <h2>1. Use the main repository as the input</h2>
+  <ul>
+    <li>Enter the repository's main Git clone URL, such as <code>https://github.com/org/repo.git</code> or the standard GitHub repository URL.</li>
+    <li>The current V1 repository acquisition flow is designed for the main/default repository and does <strong>not yet support GitHub tree URLs for branches or tags</strong>, such as <code>/tree/v1</code>.</li>
+    <li>If you need to analyse a particular branch or tag, use the repository's supported main URL for now; branch/tag URL support is planned for a later version.</li>
+    <li><strong>Analysis inputs cannot be changed after analysis starts.</strong> Once you have submitted the API key, model selection, and repository, those inputs cannot be changed within the same analysis. If you need different inputs, start a new browser tab and begin a new analysis.</li>
+  </ul>
+
+  <h2>2. Start with an inexpensive model</h2>
+  <ul>
+    <li>You do not need a frontier model to get useful SDLC documentation; <strong>OpenRouter/free models can produce a meaningful baseline</strong>, particularly when the repository is reasonably structured.</li>
+    <li>The application uses repository intelligence, phase-specific research, common agent instructions, and phase/skill guidance to give the model structured evidence and a repeatable analysis process.</li>
+    <li>A stronger model can still produce better results on difficult repositories or phases, so model quality remains one factor in the final output.</li>
+    <li>Once you get a baseline, you can ask your coding agent to refine the documents, if need be.</li>
+    <li>If you use <strong>OpenRouter/free models</strong>, consider running only <strong>2–3 phases at a time</strong>. Free models may be subject to provider request-per-minute limits, so running many phases simultaneously can increase the chance of rate-limit failures.</li>
+    <li>OpenRouter/free may route different turns to different available models. As a result, a single phase may be processed by different models across its turns, so results can vary between runs.</li>
+    <li>If you use OpenRouter/free, check your OpenRouter model settings and exclude the <strong>Nemotron Security</strong> model. It may classify the request instead of producing the expected analysis output, which can result in an empty phase result.</li>
+  </ul>
+
+  <h2>3. Model quality and cost can be compared phase by phase</h2>
+  <ul>
+    <li>A practical approach is to run a baseline with a free model, review the phases, and use a stronger model only where a result needs deeper reasoning or correction.</li>
+    <li>A complete 12-phase analysis can use up to approximately <strong>3.7 million input and output tokens</strong>, with input tokens typically making up the largest portion. Actual consumption varies with the repository, selected phases, model, prompts, and analysis path.</li>
+    <li>Paid models can increase cost, but OpenRouter/free models can still provide a useful and reasonable baseline.</li>
+    <li>For the Vercel Next.js Commerce demonstration, a paid DeepSeek V4 Flash run through OpenRouter used approximately <strong>$0.10</strong> across <strong>141 requests</strong>, <strong>3.27 mn tokens</strong>, with an observed cache hit rate of approximately <strong>75.3%</strong>.</li>
+    <li>These figures are a demonstration snapshot rather than a fixed cost estimate; actual cost depends on repository size, selected phases, model, prompts, caching, and provider pricing.</li>
+  </ul>
+
+  <h2>4. All available SDLC phases can be run in parallel</h2>
+  <ul>
+    <li>All available SDLC phases can be selected and run in parallel.</li>
+    <li>When using <strong>OpenRouter/free models</strong>, running about <strong>2–3 phases at a time</strong> is recommended because free-model providers may impose request-per-minute limits.</li>
+    <li>If you encounter provider rate limits with other models, reducing the number of simultaneous phases can also make failures easier to isolate and reduce simultaneous provider load.</li>
+    <li>You can rerun individual phases without repeating the entire analysis.</li>
+  </ul>
+
+  <h2>5. Current provider support</h2>
+  <ul>
+    <li>In the current V1 demo, the application directly supports <strong>OpenAI</strong> and <strong>OpenRouter</strong>.</li>
+    <li>Other model providers can be accessed through OpenRouter where their models are available, without requiring provider-specific integration in the application.</li>
+  </ul>
+
+  <h2>6. Treat the output as an evidence-based starting point</h2>
+  <ul>
+    <li>Reverse SDLC reconstructs documentation from an existing implementation; it does not know the original team's undocumented intentions.</li>
+    <li>The source repository remains the primary source of truth, while generated documentation is an interpretation that should be verified.</li>
+    <li>When reviewing a statement, ask: <strong>“Where in the repository does this claim come from?”</strong></li>
+  </ul>
+
+  <h2>7. Review before using the documentation</h2>
+  <ul>
+    <li>Check business behavior, architecture, technology and dependency claims, user workflows, security observations, testing claims, assumptions, and recommendations.</li>
+    <li>AI can miss relevant code, oversimplify architecture, infer behavior incorrectly, or describe legacy behavior as intentional design.</li>
+    <li>If a result is not satisfactory, rerun that phase. If necessary, <strong>start a new browser tab</strong> and run the phase again.</li>
+    <li>If you refresh the page during your work, the <strong>Review Repo</strong> workflow may no longer have access to phase results from the previous session. You may need to rerun the phases you want to use as input for <strong>Review Repo</strong>.</li>
+  </ul>
+
+  <h2>8. Workspace and stopping analysis</h2>
+  <ul>
+    <li>If you need to stop because of unexpected token usage, cost concerns, incorrect inputs, or because you no longer want the analysis to continue, use <strong>Stop &amp; Exit</strong>. Any completed work is retained up to the point at which the analysis is stopped.</li>
+    <li>If you realize that you entered incorrect input values, use <strong>Stop Analysis</strong> rather than allowing the analysis to continue. Work completed up to that point is retained.</li>
+    <li>Your OpenAI API key is <strong>not stored by the application</strong>. The server-side workspace created for an analysis is removed when you close the workspace using <strong>Stop &amp; Exit</strong>.</li>
+  </ul>
+
+  <h2>9. Documenting an existing repository</h2>
+  <ul>
+    <li><strong>Run a baseline:</strong> Start with an available inexpensive model rather than optimizing for maximum model capability immediately.</li>
+    <li><strong>Review:</strong> Identify statements that are well supported, uncertain, speculative, incomplete, or incorrect.</li>
+    <li><strong>Rerun:</strong> Improve weak phases individually instead of automatically rerunning everything.</li>
+    <li><strong>Refine:</strong> Review and refine the generated documents before treating them as permanent project documentation.</li>
+  </ul>
+
+  <h2>10. Do not confuse current behavior with desired behavior</h2>
+  <ul>
+    <li>Reverse SDLC starts from what the software currently implements, so generated requirements and architecture may describe existing behavior even when that behavior is undesirable or incomplete.</li>
+    <li>When converting the output into future specifications, explicitly distinguish observed current behavior from intended future behavior.</li>
+  </ul>
+
+  <h2>11. Use Reverse SDLC for specification-driven development</h2>
+  <ul>
+    <li>Generate documentation from the implementation, review it, resolve contradictions and ambiguities, and refine it into a specification that represents the intended future system.</li>
+    <li>The resulting documentation can then serve as a structured input for subsequent development work, including AI-assisted specification or coding workflows.</li>
+    <li>If you install the application locally from GitHub, you can further customize the <strong>agent instructions and skill definitions used by individual phases</strong> to suit your repository, workflow, or documentation requirements.</li>
+  </ul>
+
+  <h2>12. When a result does not look right</h2>
+  <ul>
+    <li>First determine whether the problem is isolated to one phase rather than assuming the entire analysis has failed.</li>
+    <li>If the repository contains ambiguous, inconsistent, legacy, or undocumented behavior, human review may be required to determine the intended meaning.</li>
+    <li>If a phase produces an unsatisfactory result, rerun that phase rather than automatically repeating the entire analysis.</li>
+  </ul>
+
+  <h2>13. Important limitations</h2>
+  <ul>
+    <li>Reverse SDLC cannot guarantee that every generated statement is correct or complete.</li>
+    <li>The quality of the result depends on the repository, the available repository intelligence, the analysis instructions, and the model used.</li>
+    <li>Generated documentation should be reviewed before it is used for important technical, product, or business decisions.</li>
+  </ul>
+
+  <h2>14. Practical workflow</h2>
+  <div class="callout"><strong>Use the main repository → Analyze → Review → Identify weak phases → Rerun selectively → Refine → Publish/use</strong></div>
+  <ul>
+    <li>Start inexpensively, spend additional model capacity only where it improves the result, and keep the source repository available for verification.</li>
+  </ul>
+
+   
+      
+       
+  
+  <h2>About and feedback</h2>
+  <div class="callout">
+    <p><strong>ReverseEngineer-SDLC</strong> is created by <strong>N Murugesan</strong>.</p>
+    <p>For feedback, comments, bug reports, or questions about the application, please contact <a href="mailto:nmurugs@gmail.com">nmurugs@gmail.com</a>.</p>
+  </div>
+
+  <footer>
+  ReverseEngineer-SDLC — In-app usage guide<br>
+  Developed and maintained by <strong>N Murugesan</strong> ·
+  <a href="mailto:nmurugs@gmail.com">Contact / Feedback</a>
+</footer>
+
+</body>
+</html>

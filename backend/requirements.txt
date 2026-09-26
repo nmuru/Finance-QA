@@ -1,0 +1,9 @@
+fastapi
+uvicorn[standard]
+pydantic-settings
+httpx
+requests
+openai-agents
+psutil
+tree-sitter-language-pack
+edgartools

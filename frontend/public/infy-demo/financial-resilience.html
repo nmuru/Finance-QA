@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>financial-resilience</title>
+<style>
+body { margin:0; background:#f6f7f9; color:#1f2937; font-family:Arial,Helvetica,sans-serif; }
+main { max-width:900px; margin:0 auto; padding:40px 28px; background:#fff; min-height:100vh; }
+h1,h2,h3,h4,h5,h6 { line-height:1.25; margin-top:1.5em; }
+p,li { line-height:1.6; }
+table { border-collapse:collapse; margin:18px 0; width:100%; }
+td { border:1px solid #d1d5db; padding:8px; text-align:left; vertical-align:top; }
+pre { background:#111827; color:#f9fafb; overflow:auto; padding:16px; border-radius:8px; }
+code { background:#eef0f3; padding:2px 4px; border-radius:3px; }
+pre code { background:transparent; padding:0; }
+a { color:#2563eb; }
+.mermaid { overflow-x:auto; margin:24px 0; padding:12px; }
+</style>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad:true, securityLevel:"loose", theme:"default" });
+</script>
+</head>
+<body><main><p>---</p>
+<p>model: deepseek/deepseek-v4-flash-0731</p>
+<p>---</p>
+<h1>Financial Resilience Analysis — Infosys Ltd (SEC CIK 1067491)</h1>
+<p><strong>Scope and basis:</strong> Annual statement-of-financial-position (balance-sheet &quot;instant&quot;) data and annual income/cash-flow data for fiscal years FY2021–FY2025, as reported in SEC Form 20-F XBRL filings (IFRS taxonomy, fiscal year-end March 31). All figures in USD.</p>
+<p>---</p>
+<h2>1. Risk Summary</h2>
+<p>Infosys carries a structurally defensive balance sheet: current assets cover current liabilities by roughly 2.3x, the company reports no material interest-bearing borrowings, and operating profit covers total finance costs by more than 80x. Bankruptcy risk from liquidity or debt-service stress is assessed as very low. The main forward-looking risk factors are not solvency but cash-deployment pressure — rising dividend payouts (≈$2.42B in FY2025) and a lower cash buffer in FY2023 that has since been rebuilt — and the classification of lease liabilities (~$0.96B) as the most debt-like obligation on the statement. No ratio crosses any distress threshold in the trailing three years.</p>
+<p>---</p>
+<h2>2. Liquidity Profile</h2>
+<p><strong>Key inputs (FY2021–FY2025):</strong></p>
+<table><tbody>
+<tr><td>Metric ($B)</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Current assets</td><td>8.307</td><td>8.865</td><td>8.626</td><td>10.722</td><td>11.359</td></tr>
+<tr><td>Current liabilities</td><td>3.264</td><td>4.433</td><td>4.769</td><td>4.651</td><td>5.012</td></tr>
+<tr><td><strong>Current ratio</strong></td><td><strong>2.5x</strong></td><td><strong>2.0x</strong></td><td><strong>1.8x</strong></td><td><strong>2.3x</strong></td><td><strong>2.3x</strong></td></tr>
+<tr><td>Cash &amp; cash equivalents</td><td>3.380</td><td>2.305</td><td>1.481</td><td>1.773</td><td>2.861</td></tr>
+<tr><td>Net working capital (CA − CL)</td><td>5.043</td><td>4.432</td><td>3.857</td><td>6.071</td><td>6.347</td></tr>
+</tbody></table>
+<ul>
+<li><strong>Current ratio:</strong> Remains above 1.0x in every year surveyed; no liquidity warning is triggered. The ratio contracted from 2.5x (FY2021) to a trough of 1.8x (FY2023) as current liabilities grew faster than current assets, then recovered to ≈2.3x in FY2024–FY2025.</li>
+<li><strong>Quick ratio (acid test):</strong> No inventory concept is populated (consistent with a services business), so inventory is treated as nil and the quick ratio equals the current ratio (≈2.3x FY2025). The company is not reliant on inventory liquidation to meet short-term obligations.</li>
+<li><strong>Working-capital assessment:</strong> Net working capital is positive and expanding (≈$6.35B at FY2025), indicating short-term obligations are covered with a meaningful liquidity cushion. Cash and equivalents of $2.86B cover ~57% of current liabilities at FY2025, up from a thin ~31% in FY2023. The FY2023 cash trough coincided with heavy capital-return activity (share buybacks of ~$1.50B in FY2022 and ~$1.40B in FY2023) and was fully reversed by FY2025. Trade and other current payables are modest at $0.49B, and current tax liabilities ($0.57B) are the other dominant current liability line — both operational in nature.</li>
+<li><strong>Defensive observation:</strong> The FY2023 compression (ratio down to 1.8x) shows that a simultaneous step-up in payables and capital returns can erode the buffer; ongoing large dividend/capital-return commitments should be stress-tested against revenue growth in future periods.</li>
+</ul>
+<p>---</p>
+<h2>3. Solvency &amp; Leverage</h2>
+<p><strong>Key inputs (FY2021–FY2025):</strong></p>
+<table><tbody>
+<tr><td>Metric ($B)</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Total assets</td><td>14.825</td><td>15.555</td><td>15.312</td><td>16.523</td><td>17.419</td></tr>
+<tr><td>Equity attributable to owners of parent</td><td>10.442</td><td>9.941</td><td>9.172</td><td>10.559</td><td>11.205</td></tr>
+<tr><td>Total liabilities</td><td>4.323</td><td>5.561</td><td>6.088</td><td>5.918</td><td>6.164</td></tr>
+<tr><td>Debt-to-equity (reported borrowings)</td><td>~0.0x</td><td>~0.0x</td><td>~0.0x</td><td>~0.0x</td><td>~0.0x</td></tr>
+<tr><td>Debt-to-assets (reported borrowings)</td><td>~0%</td><td>~0%</td><td>~0%</td><td>~0%</td><td>~0%</td></tr>
+<tr><td>Statement obligations-to-equity (stress proxy)</td><td>0.41x</td><td>0.56x</td><td>0.66x</td><td>0.56x</td><td>0.55x</td></tr>
+</tbody></table>
+<ul>
+<li><strong>Debt position:</strong> The SEC IFRS data reports the <code>Borrowings</code> concept as nil, and no long-term debt concept is populated for the period. Applying the analytical rule that unreported short-term/long-term debt is treated as zero — and not proxying debt with total liabilities — total debt is assessed at approximately $0, giving a debt-to-equity ratio of ~0.0x and debt-to-assets of ~0%. The company is not leveraged in the traditional debt-financing sense.</li>
+<li><strong>Obligation structure (context, not debt):</strong> Total liabilities of $6.16B (FY2025) are dominated by operating/non-debt items. The most debt-like are lease liabilities of ~$0.96B (IFRS right-of-use arrangements) and other current financial liabilities of just $0.06B; the residual comprises tax, payables, and provisions. Even using total liabilities as a deliberately conservative stress proxy for leverage, the ratio to equity peaked at only 0.66x in FY2023 and stood at 0.55x at FY2025.</li>
+<li><strong>Equity trend:</strong> Equity attributable to owners of parent contracted from $10.44B (FY2021) to $9.17B (FY2023) — the product of cumulative dividend payouts (~$1.2B–$1.8B/yr) and buybacks, with retained earnings lagging — before recovering to a record $11.21B by FY2025. No negative-equity condition, and no severe solvency warning, is present.</li>
+<li><strong>Defensive observation:</strong> The equity dip in FY2023 demonstrates that aggressive capital return can temporarily shrink the equity base even without debt. The current trajectory (equity +6% YoY through FY2025) is favorable, but the ratio of total obligations to equity should be monitored if payouts continue to outpace retained earnings.</li>
+</ul>
+<p>---</p>
+<h2>4. Debt Service Capacity</h2>
+<p><strong>Key inputs (FY2021–FY2025):</strong></p>
+<table><tbody>
+<tr><td>Metric ($M)</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Operating profit (profit/loss from operating activities)</td><td>3,325</td><td>3,755</td><td>3,825</td><td>3,834</td><td>4,071</td></tr>
+<tr><td>Finance costs (interest-type expense)</td><td>26</td><td>27</td><td>35</td><td>56</td><td>49</td></tr>
+<tr><td><strong>Interest coverage (operating profit ÷ finance costs)</strong></td><td><strong>~128x</strong></td><td><strong>~139x</strong></td><td><strong>~109x</strong></td><td><strong>~69x</strong></td><td><strong>~83x</strong></td></tr>
+<tr><td>Interest on lease liabilities (additional)</td><td>24</td><td>24</td><td>30</td><td>39</td><td>40</td></tr>
+</tbody></table>
+<ul>
+<li><strong>Coverage assessment:</strong> Operating profit covers finance costs by ~83x in FY2025 (FY2024: ~69x), far above the 1.5x distress threshold. Even if lease-interest expense ($40M FY2025) is added to finance costs, combined interest-type expense of ~$89M leaves coverage above ~45x. The company generates operating profits of ≈$4.07B against total interest-type costs under $100M.</li>
+<li><strong>Risk view:</strong> Debt servicing is not a current risk factor given the near-absence of interest-bearing debt. The elevated and rising dividend line ($1.23B → $2.42B over the window, ~12.5% of FY2025 revenue) is the more meaningful fixed cash flow and is comfortably funded from operating cash generation ($3.16B &quot;profit or loss&quot; reconciliation in the cash flow statement, FY2025), but it is a recurring claim on the cash buffer and should be monitored as coverage of the dividend grows, not the interest bill.</li>
+<li><strong>Distress check:</strong> No distress warning applies — coverage has never approached 1.5x, and no operating-loss scenario is observed in the trailing five years.</li>
+</ul>
+<p>---</p>
+<h2>Data Limitations &amp; Caveats</h2>
+<ul>
+<li>Infosys files SEC Form 20-F under the IFRS taxonomy; the US-GAAP concepts contemplated by a standard US analysis (e.g., <code>AssetsCurrent</code>, <code>LiabilitiesCurrent</code>, <code>DebtCurrent</code>, <code>StockholdersEquity</code>) are not the populated tags. IFRS equivalents were used: <code>CurrentAssets</code>, <code>CurrentLiabilities</code>, <code>EquityAttributableToOwnersOfParent</code>, <code>Borrowings</code>, and <code>FinanceCosts</code>.</li>
+<li>The <code>Borrowings</code> concept is populated as nil, and no long-term borrowings concept carries observations for FY2021–FY2025; total debt is therefore assessed at ~$0 per the stated analytical convention. Total liabilities should not be misread as debt — they include trade payables, tax liabilities, provisions, and lease liabilities.</li>
+<li>No inventory concept is reported; quick ratio equals current ratio under the assumption of nil inventory.</li>
+<li>Certain granular line items (e.g., full decomposed current-asset schedule) are not fully populated in the XBRL facts for all years; the analysis uses the populated concepts above plus the normalized statement rows (total assets, total liabilities, goodwill, income-statement and cash-flow lines) supplied in the controlled evidence set.</li>
+</ul></main></body>
+</html>

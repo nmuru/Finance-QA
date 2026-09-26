@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>revenue-earnings-engine</title>
+<style>
+body { margin:0; background:#f6f7f9; color:#1f2937; font-family:Arial,Helvetica,sans-serif; }
+main { max-width:900px; margin:0 auto; padding:40px 28px; background:#fff; min-height:100vh; }
+h1,h2,h3,h4,h5,h6 { line-height:1.25; margin-top:1.5em; }
+p,li { line-height:1.6; }
+table { border-collapse:collapse; margin:18px 0; width:100%; }
+td { border:1px solid #d1d5db; padding:8px; text-align:left; vertical-align:top; }
+pre { background:#111827; color:#f9fafb; overflow:auto; padding:16px; border-radius:8px; }
+code { background:#eef0f3; padding:2px 4px; border-radius:3px; }
+pre code { background:transparent; padding:0; }
+a { color:#2563eb; }
+.mermaid { overflow-x:auto; margin:24px 0; padding:12px; }
+</style>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad:true, securityLevel:"loose", theme:"default" });
+</script>
+</head>
+<body><main><p>---</p>
+<p>model: deepseek/deepseek-v4-flash-0731</p>
+<p>---</p>
+<p>All evidence is gathered and reconciled (revenue segments, expense bridge, EPS components, and share counts check out against the totals). Below is the completed phase analysis.</p>
+<p>---</p>
+<h1>Revenue &amp; Earnings Engine — IBM (CIK 51143)</h1>
+<h2>Phase Analysis: Top-Line Trajectory, Margin Evolution &amp; Earnings Quality (FY2021–FY2025)</h2>
+<p>Source: SEC Company Facts (via EdgarTools), annual income statement data for fiscal years ended December 31, 2021–2025. All figures in USD millions unless noted; percentages rounded to one decimal.</p>
+<p>---</p>
+<h2>1. Executive Summary</h2>
+<p>IBM&#x27;s revenue-and-earnings engine is healthy and demonstrably re-accelerating: after two years of sub-2% growth (FY2023–FY2024), total revenue grew 7.6% in FY2025 — the strongest print of the five-year window — while gross margin expanded to 58.2% and derived operating margin reached 16.1%, both multi-year highs. Net income attributable to IBM rose 75.9% in FY2025 to $10.6B, though the multi-year profit path is noisy: FY2022 and FY2024 were depressed by large non-operating items, and the recent two years have benefited from income-tax benefits, so the underlying operating engine (not the reported trough-to-peak swings) is the cleaner read. Earnings quality is mixed but not engineered: EPS growth tracks net income growth closely, with no buyback subsidy — in fact, a rising weighted-average share count (≈+1.2%–1.6% per year) means per-share growth slightly <em>understates</em> the underlying net income growth.</p>
+<p>---</p>
+<h2>2. Top-Line Trajectory</h2>
+<table><tbody>
+<tr><td>Metric</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Total revenue ($M)</td><td>57,350</td><td>60,530</td><td>61,860</td><td>62,753</td><td>67,535</td></tr>
+<tr><td>YoY growth</td><td>—</td><td>5.5%</td><td>2.2%</td><td>1.4%</td><td>7.6%</td></tr>
+</tbody></table>
+<ul>
+<li><strong>3-year CAGR (FY2022 → FY2025): 3.7%</strong> — sustained mid-single-digit compounding, classified as mature, low-growth — but the trajectory is <strong>re-accelerating</strong>, not decelerating: growth bottomed at 1.4% in FY2024 and more than quintupled to 7.6% in FY2025.</li>
+<li><strong>5-year (FY2021 → FY2025) equivalent CAGR: 4.2%.</strong> Even including the FY2022–FY2024 soft patch, the top line has compounded at a low-to-mid single-digit rate.</li>
+</ul>
+<p><strong>Revenue mix shift (per IBM&#x27;s product/service tagging; FY2023–FY2025):</strong></p>
+<table><tbody>
+<tr><td>Revenue line ($M)</td><td>FY2023</td><td>FY2024</td><td>FY2025</td><td>FY25 YoY</td></tr>
+<tr><td>Services</td><td>30,378</td><td>29,813</td><td>30,714</td><td>+3.0%</td></tr>
+<tr><td>Sales (product)</td><td>30,745</td><td>32,231</td><td>36,085</td><td>+12.0%</td></tr>
+<tr><td>Financing</td><td>737</td><td>709</td><td>737</td><td>+3.9%</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>61,860</strong></td><td><strong>62,753</strong></td><td><strong>67,535</strong></td><td><strong>+7.6%</strong></td></tr>
+</tbody></table>
+<p>The FY2025 acceleration is almost entirely product-led: the Sales line grew 12.0% and now represents 53.4% of revenue (up from 49.7% in FY2023), while Services declined 1.9% in FY2024 and grew only 3.0% in FY2025. The mix is tilting structurally toward the higher-margin Sales category, which is the principal mechanical driver of the margin expansion quantified below.</p>
+<p>---</p>
+<h2>3. Margin Evolution</h2>
+<table><tbody>
+<tr><td>Margin</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td><td>Δ FY22→FY25</td></tr>
+<tr><td>Gross margin</td><td>54.9%</td><td>54.0%</td><td>55.4%</td><td>56.6%</td><td>58.2%</td><td><strong>+4.2 pts</strong></td></tr>
+<tr><td>Operating margin (derived*)</td><td>10.9%</td><td>12.4%</td><td>13.8%</td><td>13.4%</td><td>16.1%</td><td><strong>+3.7 pts</strong></td></tr>
+<tr><td>Net margin (attrib. to parent)</td><td>10.0%</td><td>2.7%</td><td>12.1%</td><td>9.6%</td><td>15.7%</td><td><strong>+13.0 pts</strong></td></tr>
+</tbody></table>
+<p>*Operating income is derived as Gross profit − R&amp;D − Selling, general &amp; administrative (SG&amp;A), consistent with IBM&#x27;s 10-K presentation; no <code>OperatingIncomeLoss</code> concept is tagged in the source taxonomy.</p>
+<p><strong>Gross margin — steady structural expansion.</strong> Up ~3.3 pts over five years and 4.2 pts from FY2022, reaching 58.2% in FY2025. Segment detail shows the driver: gross margins of 81.0% on Sales (FY2025) versus 31.7% on Services and 45.3% on Financing. Mixed-signal skill check: here both gross <em>and</em> operating margin rose together, so the expansion is core-cost-structure driven (mix), not simply SG&amp;A efficiency masking cost pressure.</p>
+<p><strong>Operating leverage — strong in FY2025.</strong> Derived operating margin improved from 13.4% (FY2024) to 16.1% (FY2025), with operating income up 29.5% on 7.6% revenue growth. The expense structure confirms genuine leverage: SG&amp;A grew only 2.2% (ratio fell to 29.8% of revenue) while R&amp;D grew 11.2% — investment spending (R&amp;D ratio up to 12.3% of revenue from 11.0% in FY2023) is being more than offset by gross-profit growth and disciplined SG&amp;A.</p>
+<p><strong>Non-operating bridge (FY2023–FY2025, per IBM-tagged lines) — where the reported profit volatility comes from:</strong></p>
+<table><tbody>
+<tr><td>Item ($M)</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Operating income (derived)</td><td>8,522</td><td>8,384</td><td>10,858</td></tr>
+<tr><td>Intellectual property &amp; custom development income</td><td>+860</td><td>+996</td><td>+964</td></tr>
+<tr><td>Other (income) and expense</td><td><strong>(914)</strong> income</td><td><strong>1,871</strong> expense</td><td><strong>(442)</strong> income</td></tr>
+<tr><td>Interest expense</td><td>(1,607)</td><td>(1,712)</td><td>(1,935)</td></tr>
+<tr><td><strong>Pretax income from continuing ops</strong></td><td><strong>8,690</strong></td><td><strong>5,797</strong></td><td><strong>10,328</strong></td></tr>
+</tbody></table>
+<p>The ~$2.8B FY2024 swing in &quot;Other (income) and expense&quot; (income in FY2023/FY2025, a large expense in FY2024) is the primary explanation for the FY2024 margin dip and FY2025 rebound; rising interest expense (up 13.0% in FY2025 to $1.9B) is a growing, offsetting drag. <strong>Note:</strong> FY2022 pretax income of $1.2B sits ~$6.4B below derived operating income; the offsetting non-operating charges are not itemized in the retrieved rows and materially depress FY2022 margins — exercise care in FY2022-anchored comparisons.</p>
+<p><strong>Effective tax rate:</strong> 2.6% (FY2021) → −54.2% (FY2022) → 13.5% (FY2023) → −3.8% (FY2024) → −2.3% (FY2025). Both FY2024 ($0.2B) and FY2025 ($0.2B) recorded net tax <em>benefits</em> — a modest but real tailwind to net income relative to the FY2023 base-year provision of $1.2B.</p>
+<p>---</p>
+<h2>4. Earnings Quality</h2>
+<table><tbody>
+<tr><td>Metric</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Net income (attrib. to parent, $M)</td><td>5,743</td><td>1,639</td><td>7,502</td><td>6,023</td><td>10,593</td></tr>
+<tr><td>Diluted EPS ($)</td><td>6.35</td><td>1.80</td><td>8.14</td><td>6.43</td><td>11.17</td></tr>
+<tr><td>NI YoY growth</td><td>—</td><td>−71.5%</td><td>+357.7%</td><td>−19.7%</td><td>+75.9%</td></tr>
+<tr><td>Diluted EPS YoY growth</td><td>—</td><td>−71.7%</td><td>+352.2%</td><td>−21.0%</td><td>+73.7%</td></tr>
+<tr><td>Wtd-avg diluted shares (M)</td><td>904.6</td><td>912.3</td><td>922.1</td><td>937.2</td><td>948.7</td></tr>
+<tr><td>Diluted share count YoY</td><td>—</td><td>+0.8%</td><td>+1.1%</td><td>+1.6%</td><td>+1.2%</td></tr>
+</tbody></table>
+<p><strong>EPS vs. net income — no buyback subsidy; slight per-share dilution.</strong> EPS growth tracked net income growth within ~2 points in every year (FY2025: +73.7% EPS vs. +75.9% NI). Per the earnings-quality screen, EPS growth is <em>not</em> running ahead of net income growth, and the explanation is directly observable: the weighted-average diluted share count is <strong>rising</strong> ~1.2%–1.6% per year (cumulative +4.9% since FY2021), not falling. EPS growth is therefore being slightly <em>diluted</em> by net share issuance, not subsidized by repurchases. The apparent 3-year EPS CAGR of 83.8% (FY2022→FY2025; NI CAGR 86.3%) is purely a FY2022 base effect; on a cleaner FY2023→FY2025 basis, NI and EPS compound at 18.8% and 17.1%, respectively.</p>
+<p><strong>Quality caveats to flag:</strong></p>
+<ul>
+<li><strong>Growth is real at the operating level, with a small tax assist.</strong> FY2025 pretax income grew +78.2% — ahead of the +75.9% net income growth — so the recovery is fundamentally operating-driven; the $0.2B tax benefit is a modest, non-recurring-style support versus FY2023&#x27;s $1.2B provision.</li>
+<li><strong>Reported earnings are cyclically noisy, not smoothed.</strong> The FY2022 trough (~$6.4B of non-operating charges), the FY2024 &quot;Other (income) and expense&quot; hit, and swing in tax provisions mean single-year reported margins overstate the smoothness of the profit engine; the derived operating margin (10.9% → 16.1% over five years) is the cleanest trend line.</li>
+<li><strong>Discontinued operations are now immaterial</strong> (FY2025: +$22M; FY2024: +$8M) but were meaningful in FY2021 (+$1,030M, ≈$1.14 per diluted share), so FY2021-reported EPS is not fully comparable with later years on a continuing-operations basis. Continuing-ops diluted EPS for FY2025 is $11.14 vs. reported $11.17.</li>
+<li><strong>R&amp;D reinvestment is accelerating faster than revenue</strong> (+10.4% FY2024, +11.2% FY2025) — a positive signal for forward competitiveness that is already being absorbed without margin erosion.</li>
+<li>No negative-net-income/positive-EPS anomaly was observed in any period.</li>
+</ul>
+<p>---</p>
+<h2>Data Limitations</h2>
+<ul>
+<li>Operating income is <strong>derived</strong> (Gross profit − R&amp;D − SG&amp;A) because no <code>OperatingIncomeLoss</code> caption is tagged in the SEC Company Facts source; the derivation reconciles to pretax income within $1M for FY2023–FY2025 using IBM&#x27;s own &quot;Other (income) and expense,&quot; IP/custom-development income, and interest-expense tags.</li>
+<li>FY2022 non-operating charges (~$6.4B) and FY2021 discontinued operations are quantified in totals but their underlying line-item drivers are not fully itemized in the retrieved evidence; no pension/retirement settlement concept is present in the tagged source.</li>
+<li>Segment revenue detail (Services/Sales/Financing) is available only for FY2023–FY2025 in the normalized collection.</li>
+</ul></main></body>
+</html>

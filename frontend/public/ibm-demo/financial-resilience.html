@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>financial-resilience</title>
+<style>
+body { margin:0; background:#f6f7f9; color:#1f2937; font-family:Arial,Helvetica,sans-serif; }
+main { max-width:900px; margin:0 auto; padding:40px 28px; background:#fff; min-height:100vh; }
+h1,h2,h3,h4,h5,h6 { line-height:1.25; margin-top:1.5em; }
+p,li { line-height:1.6; }
+table { border-collapse:collapse; margin:18px 0; width:100%; }
+td { border:1px solid #d1d5db; padding:8px; text-align:left; vertical-align:top; }
+pre { background:#111827; color:#f9fafb; overflow:auto; padding:16px; border-radius:8px; }
+code { background:#eef0f3; padding:2px 4px; border-radius:3px; }
+pre code { background:transparent; padding:0; }
+a { color:#2563eb; }
+.mermaid { overflow-x:auto; margin:24px 0; padding:12px; }
+</style>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad:true, securityLevel:"loose", theme:"default" });
+</script>
+</head>
+<body><main><p>---</p>
+<p>model: deepseek/deepseek-v4-flash-0731</p>
+<p>---</p>
+<h1>Financial Resilience Analysis — International Business Machines Corp (SEC CIK 51143)</h1>
+<p><strong>Evidence base:</strong> SEC Company Facts XBRL data (EdgarTools collection) and targeted XBRL fact verification in the Company Facts JSON. Entity is International Business Machines Corp (IBM). Fiscal year-end is December 31; five annual periods analyzed (FY2021–FY2025, latest 10-K filed February 2026). All figures are USD as reported.</p>
+<p>---</p>
+<h2>1. Risk Summary</h2>
+<p>IBM presents <strong>low bankruptcy risk with a sound but technically tight liquidity posture and an elevated, though visibly improving, debt burden</strong>. The company generates very strong and stable operating cash flow (~$13.2B in FY2025, sixth consecutive year above $10B), holds $13.6B of cash, and its interest coverage of <strong>5.3x</strong> is comfortably above the 1.5x distress threshold. The main cautions are structural rather than acute: the current ratio sits below 1.0 (0.96x at FY2025), total debt rose to $61.3B on acquisitions and M&amp;A activity, and FY2024–FY2025 saw debt-to-equity only just fall back under the 2.0x &quot;highly leveraged&quot; threshold after three consecutive years above it.</p>
+<p>---</p>
+<h2>2. Liquidity Profile</h2>
+<table><tbody>
+<tr><td>FYE (Dec 31)</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Current assets ($B)</td><td>29.54</td><td>29.12</td><td>32.91</td><td>34.48</td><td>36.94</td></tr>
+<tr><td>Current liabilities ($B)</td><td>33.62</td><td>31.51</td><td>34.12</td><td>33.14</td><td>38.66</td></tr>
+<tr><td><strong>Current ratio</strong></td><td><strong>0.88x</strong></td><td><strong>0.92x</strong></td><td><strong>0.96x</strong></td><td><strong>1.04x</strong></td><td><strong>0.96x</strong></td></tr>
+<tr><td>Inventory ($B)</td><td>1.65</td><td>1.55</td><td>1.16</td><td>1.29</td><td>1.22</td></tr>
+<tr><td><strong>Quick ratio</strong></td><td><strong>0.83x</strong></td><td><strong>0.88x</strong></td><td><strong>0.93x</strong></td><td><strong>1.00x</strong></td><td><strong>0.92x</strong></td></tr>
+<tr><td>Cash &amp; cash equivalents ($B)</td><td>6.65</td><td>7.89</td><td>13.07</td><td>13.95</td><td>13.59</td></tr>
+</tbody></table>
+<p><strong>Trend:</strong> The current ratio has hovered at or slightly below 1.0 for four of the five years, which by the skill framework flags potential liquidity strain. However, three factors materially soften that signal:</p>
+<p>1. <strong>Deferred revenue dominates current liabilities</strong> — $16.1B of the $38.7B current liability balance (42%) is deferred revenue, a services/subscription liability settled in product delivery rather than cash outlay. Excluding deferred revenue, the adjusted current ratio improves to <strong>1.6x–1.8x</strong> in every year (au contraire, an analytical adjustment based on reported balance-sheet lines).</p>
+<p>2. <strong>Cash generation is large and self-funding</strong> — operating cash flow was $13.2B in FY2025 (covered ~2.1x the $6.3B dividend outflow), and the cash balance doubled between FY2021 ($6.7B) and FY2025 ($13.6B).</p>
+<p>3. <strong>The quick ratio never breached the 0.8x inventory-dependence trigger</strong> (lowest: 0.83x in FY2021), consistent with a low-inventory software/services business where the current and quick ratios converge.</p>
+<p><strong>Working capital assessment:</strong> Inventory is modest ($1.2B) and declined steadily, appropriate for the model. Accounts receivable grew to $8.1B on higher revenue, while the FY2025 increase in current liabilities (+$5.4B) was driven partly by higher deferred revenue (+$2.2B) associated with subscription growth — a growth-linked liability, not a deterioration in trade terms. The balance sheet is asset-light in fixed assets (PP&amp;E ≤ $5.7B) and <strong>goodwill-heavy</strong> (goodwill of $67.7B equals 45% of total assets), so capital intensity is low and the cash cycle is quick. Verdict: structurally adequate liquidity with a thin margin on the unadjusted current ratio.</p>
+<p>---</p>
+<h2>3. Solvency &amp; Leverage</h2>
+<table><tbody>
+<tr><td>FYE (Dec 31)</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Short-term borrowings ($B)</td><td>6.79</td><td>4.76</td><td>6.43</td><td>5.09</td><td>6.42</td></tr>
+<tr><td>Long-term debt, excl. current maturities ($B)</td><td>44.92</td><td>46.19</td><td>50.12</td><td>49.88</td><td>54.84</td></tr>
+<tr><td><strong>Total debt ($B)</strong></td><td><strong>51.70</strong></td><td><strong>50.95</strong></td><td><strong>56.55</strong></td><td><strong>54.97</strong></td><td><strong>61.26</strong></td></tr>
+<tr><td>Stockholders&#x27; equity, parent ($B)</td><td>18.90</td><td>21.94</td><td>22.53</td><td>27.31</td><td>32.65</td></tr>
+<tr><td><strong>Debt-to-equity</strong></td><td><strong>2.74x</strong></td><td><strong>2.32x</strong></td><td><strong>2.51x</strong></td><td><strong>2.01x</strong></td><td><strong>1.88x</strong></td></tr>
+<tr><td><strong>Debt-to-assets</strong></td><td><strong>0.39x</strong></td><td><strong>0.40x</strong></td><td><strong>0.42x</strong></td><td><strong>0.40x</strong></td><td><strong>0.40x</strong></td></tr>
+<tr><td>Total assets ($B)</td><td>132.00</td><td>127.24</td><td>135.24</td><td>137.18</td><td>151.88</td></tr>
+</tbody></table>
+<p><em>Short-term debt is taken from the reported <code>ShortTermBorrowings</code> XBRL fact (verified in the Company Facts JSON, e.g., $6.42B at Dec 31, 2025); long-term debt from <code>LongTermDebtNoncurrent</code>. Non-debt current liabilities (payables, deferred revenue) are excluded from debt per methodology.</em></p>
+<p><strong>Trend:</strong> Leverage has <strong>de-leveraged continuously on a primary basis</strong>: debt-to-equity fell from <strong>2.74x (FY2021) to 1.88x (FY2025)</strong> even as total debt rose 18% over the period, because equity grew 73% (from $18.9B to $32.6B) on retained earnings. FY2021–FY2024 sit above the 2.0x &quot;highly leveraged&quot; threshold (2.3x–2.7x) — a genuine flag during those years — but FY2025 is the first year inside the threshold. Debt-to-assets is essentially flat at ~0.40x, meaning the balance sheet has grown in step with debt. Notably, the FY2025 debt increase (+$6.3B) coincides with heavy M&amp;A cash outlays ($8.3B of acquisition payments in FY2025, including material investments in FY2025), i.e., debt-funded growth rather than balance-sheet decay. Total liabilities of $119.1B include $16.1B deferred revenue and other non-debt obligations; actual interest-bearing debt is $61.3B. <strong>No solvency warning is triggered</strong> — equity is positive and growing; the main residual risk is refinancing concentration in absolute debt size ($54.8B long-term) against an equity base that is still only ~0.5x total debt at the debt-only measure.</p>
+<p>---</p>
+<h2>4. Debt Service Capacity</h2>
+<table><tbody>
+<tr><td>FYE (Dec 31)</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Operating income, pre-tax continuing ops ($B)¹</td><td>4.84</td><td>1.16</td><td>8.69</td><td>5.80</td><td>10.33</td></tr>
+<tr><td>Interest expense ($B)</td><td>1.16</td><td>1.22</td><td>1.61</td><td>1.71</td><td>1.94</td></tr>
+<tr><td><strong>Interest coverage ratio</strong></td><td><strong>4.2x</strong></td><td><strong>0.95x</strong></td><td><strong>5.4x</strong></td><td><strong>3.4x</strong></td><td><strong>5.3x</strong></td></tr>
+<tr><td>Interest paid, operating ($B)²</td><td>1.51</td><td>1.40</td><td>1.67</td><td>1.98</td><td>2.04</td></tr>
+</tbody></table>
+<p>¹ IBM does not populate a dedicated <code>OperatingIncomeLoss</code> concept; the closest reported line — &quot;Income (Loss) from Continuing Operations before Income Taxes, Noncontrolling Interest&quot; — is used as the operating-income proxy. This line is presented <strong>net of interest expense</strong> in IBM&#x27;s statement, so these ratios are a conservative (lower) reading of coverage.</p>
+<p>² From the supplemental cash-flow disclosure (cash-basis cross-check).</p>
+<p><strong>Trend:</strong> Debt service capacity is <strong>strong and improving to multi-year bests</strong>. Coverage of 5.3x in FY2025 (and 6.3x if interest is added back to the numerator to approximate a true EBIT basis) is well above the 1.5x distress threshold and more than double the 2x level generally considered adequate. The one red flag in the window is <strong>FY2022, when coverage collapsed to 0.95x</strong> — operating income ($1.16B) fell short of interest expense ($1.22B), triggering the distress characterization for that year. Management rebuilt margins and profitability rapidly (FY2023: 5.4x; FY2025: 5.3x), while interest expense continued to climb with the higher debt stock and rate environment (up 68% since FY2021). Even at the elevated interest bill of $1.94B, pre-tax operating income covers it more than five times, and operating cash flow covers interest paid by ~6.5x. <strong>No distress warning is currently triggered.</strong></p>
+<p>---</p>
+<h2>Conclusion</h2>
+<p>IBM is in good near-term financial health with <strong>low bankruptcy risk</strong>: liquidity is thin on the textbook current-ratio measure (0.96x) but well cushioned by $13.6B cash, stable ~$13B operating cash flow, and a large deferred-revenue composition that overstates true cash claims; the leverage profile is elevated in absolute terms ($61.3B total debt, 40% of assets) but de-leveraging on an equity basis (D/E 1.88x in FY2025 vs 2.74x in FY2021); and debt service is comfortably covered at 5.3x. The principal forward risks are (i) continued M&amp;A-driven debt growth against a goodwill-concentrated asset base, (ii) the sub-1.0 current ratio recurring at FYE, and (iii) rising absolute interest expense, which, while affordable at today&#x27;s margins, has tripled the FY2021 interest burden in four years.</p>
+<p><strong>Data limitations:</strong> Analysis relies on SEC XBRL as-reported values; IBM does not report a dedicated <code>OperatingIncomeLoss</code> tag, so operating income is proxied by the reported pre-tax continuing-operations income (conservative, as it is net of interest). The deferred-revenue-adjusted current ratio is an analytical adjustment to reported balance-sheet lines, not a reported figure. Short-term debt is captured from the <code>ShortTermBorrowings</code> fact; any separate &quot;current maturities of long-term debt&quot; line item in IBM&#x27;s presentation is not separately identified in this collection and could add to total debt if present in the underlying 10-K schedules. Minor differences exist between balance-sheet cash ($13.59B) and cash-flow-statement cash including restricted cash ($13.64B) at FY2025.</p></main></body>
+</html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>accounting-signals-anomalies</title>
+<style>
+body { margin:0; background:#f6f7f9; color:#1f2937; font-family:Arial,Helvetica,sans-serif; }
+main { max-width:900px; margin:0 auto; padding:40px 28px; background:#fff; min-height:100vh; }
+h1,h2,h3,h4,h5,h6 { line-height:1.25; margin-top:1.5em; }
+p,li { line-height:1.6; }
+table { border-collapse:collapse; margin:18px 0; width:100%; }
+td { border:1px solid #d1d5db; padding:8px; text-align:left; vertical-align:top; }
+pre { background:#111827; color:#f9fafb; overflow:auto; padding:16px; border-radius:8px; }
+code { background:#eef0f3; padding:2px 4px; border-radius:3px; }
+pre code { background:transparent; padding:0; }
+a { color:#2563eb; }
+.mermaid { overflow-x:auto; margin:24px 0; padding:12px; }
+</style>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad:true, securityLevel:"loose", theme:"default" });
+</script>
+</head>
+<body><main><p>---</p>
+<p>model: deepseek/deepseek-v4-flash-0731</p>
+<p>---</p>
+<h1>Accounting Signals &amp; Anomalies — International Business Machines Corp. (SEC CIK 51143)</h1>
+<p><strong>Analysis window: FY2021–FY2025 | Source: SEC XBRL Company Facts via EdgarTools (normalized annual statements)</strong></p>
+<p>---</p>
+<h2>1. Scope and Evidence Notes</h2>
+<ul>
+<li>Primary evidence is the normalized annual income statement, balance sheet, and cash flow statement for FY2021–FY2025 (all figures in US$ millions unless noted).</li>
+<li><strong>Confidence flags in the source rows:</strong> Total Revenue, R&amp;D, SG&amp;A, pretax income, tax expense, net income, EPS, and the cash-flow totals carry high extraction confidence. The rows labeled <em>Cost of Revenue</em> and <em>Gross Profit</em> (confidence ≈ 0.37–0.52) are not IBM&#x27;s GAAP-presented lines (IBM reports cost by segment) and should be treated as <strong>analytical estimates</strong>, not reported facts. Gross-margin math below is therefore analytical inference.</li>
+<li>The extracted cash-flow rows do not include full financing detail (no explicit share repurchases or debt issuance/repayment lines) and only a partial working-capital reconciliation. Where a bridge cannot be closed from the available evidence, this is stated rather than filled in.</li>
+</ul>
+<p>---</p>
+<h2>2. Executive Summary of Signals</h2>
+<table><tbody>
+<tr><td>Signal</td><td>FY2025 reading</td><td>Severity</td><td>Status</td></tr>
+<tr><td>Net income growth vs. cash conversion</td><td>NI +75.9%; CFO <strong>−1.9%</strong></td><td>Elevated</td><td>Verified data; driver partly unexplained at row level</td></tr>
+<tr><td>Receivables vs. revenue</td><td>AR +19.2% vs. revenue +7.6%; DSO +~4 days</td><td>Elevated</td><td>Verified; mix/acquisition effect plausible but unquantified</td></tr>
+<tr><td>Financing/leasing income swing</td><td>Sales-type lease profit +$1,008M; lease income +$973M YoY</td><td>Elevated</td><td>Verified; interest-rate driven, non-operating-like</td></tr>
+<tr><td>Mark-to-market / hedging noise</td><td>Derivatives +$1,156M swing; FX −$1,451M swing YoY</td><td>Moderate</td><td>Verified</td></tr>
+<tr><td>Persistent atypical effective tax rate</td><td>Book ETR −2.3% (FY2025), −3.8% (FY2024); cash tax ≈ 19% of pretax</td><td>Elevated</td><td>Verified; DTL balance −80% over 5 years</td></tr>
+<tr><td>Goodwill accumulation, zero impairments</td><td>Goodwill = 44.6% of assets, 2.1× equity; $0 impairment 5 yrs</td><td>Watch</td><td>Verified; no reporting-unit disclosure available</td></tr>
+<tr><td>Share-based compensation</td><td>+30.8% YoY to $1,715M (16% of net income)</td><td>Watch</td><td>Verified</td></tr>
+<tr><td>Deferred revenue (quality counterweight)</td><td>+16.2% YoY to $20,372M total</td><td>Favorable</td><td>Verified</td></tr>
+<tr><td>Dividend payout anomaly</td><td>FY2024 payout 102% of GAAP net income (FY2025: 59%)</td><td>Note</td><td>Verified</td></tr>
+</tbody></table>
+<p>Overall conclusion: <strong>no smoking-gun accounting red flag</strong>, but FY2025&#x27;s earnings surge is materially shaped by non-operating and financing-line swings plus growing receivables and SBC; the tax position and goodwill stack are the main forward-looking quality risks.</p>
+<p>---</p>
+<h2>3. Earnings Quality: Accruals vs. Cash Conversion</h2>
+<p><strong>Cash flow coverage compressing as earnings jump (verified):</strong></p>
+<table><tbody>
+<tr><td>$M</td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Net income (parent)</td><td>5,743</td><td>1,639</td><td>7,502</td><td>6,023</td><td>10,593</td></tr>
+<tr><td>Cash from operations</td><td>12,796</td><td>10,435</td><td>13,931</td><td>13,445</td><td>13,193</td></tr>
+<tr><td>CFO ÷ NI</td><td>2.23×</td><td>6.37×</td><td>1.86×</td><td>2.23×</td><td>1.25×</td></tr>
+</tbody></table>
+<p>CFO continues to exceed net income — a genuinely strong base — but the 5-year pattern is the key signal: <strong>net income rose $4,570M in FY2025 while CFO fell $252M</strong>. The NI-to-CFO gap compressed from $7,422M to $2,600M, meaning the marginal FY2025 earnings were significantly less cash-backed. Partial drivers visible in the data include AR growth (+$1,308M), a less favorable deferred-tax adjustment, and a swing in inventory and payables; the remaining ~$3–4B of the reconciliation is not itemized in the extracted rows (data limitation).</p>
+<p><strong>Receivables timing (verified):</strong></p>
+<table><tbody>
+<tr><td></td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Revenue growth YoY</td><td>—</td><td>+5.5%</td><td>+2.2%</td><td>+1.4%</td><td>+7.6%</td></tr>
+<tr><td>AR growth YoY</td><td>—</td><td>−3.2%</td><td>+10.3%</td><td>−5.7%</td><td>+19.2%</td></tr>
+<tr><td>DSO (AR÷rev×365)</td><td>43.0</td><td>39.4</td><td>42.6</td><td>39.6</td><td>43.8</td></tr>
+</tbody></table>
+<p>FY2025 AR growth ran <strong>2.5× revenue growth</strong> and DSO reverted to FY2021 levels. This is a classic earnings-quality flag (billing acceleration, payment-term easing, or acquisition-consolidation timing). The counterweight: total deferred revenue grew 16.2% to $20,372M (current $16,101M + noncurrent $4,271M), more than 2× current AR — contracted/prepaid revenue remains the dominant balance and revenue recognition is conservatively deferred. On balance this reads as &quot;watch,&quot; not &quot;red flag.&quot;</p>
+<p><strong>Share-based compensation (verified):</strong> SBC expense rose from $982M (FY2021) to $1,715M (FY2025), or from ~17% to ~16% of net income; the YoY increase (+30.8%) far exceeded revenue growth (+7.6%). SBC is a non-cash add-back in CFO, so the growing SBC load both suppresses EPS and inflates the CFO-vs-NI comparison. Dilution is modest (basic shares +4.0% over five years; +1.1% in FY2025), but the SBC trend warrants monitoring against revenue.</p>
+<p>---</p>
+<h2>4. Anatomy of the FY2025 Pretax Surge</h2>
+<p>Pretax income (continuing operations) rose <strong>$4,531M (+78.2%)</strong> from $5,797M to $10,328M — after a depressed FY2024 and the anomalous FY2022 trough ($1,156M). The available rows decompose only part of the move:</p>
+<ul>
+<li><strong>Gross profit estimate up $3,746M</strong> (analytical; low-confidence COGS row). Gross margin estimate expanded from ~56.7% to ~58.2% (from ~54.0% in FY2022) — consistent with the software/mix shift, but partly an artifact of the estimated COGS line.</li>
+<li><strong>A large, rate-driven financing component (verified):</strong> sales-type lease selling profit surged $1,008M (to $1,697M) and lease income rose $973M (to $2,058M). Combined, the financing/leasing lines contributed roughly <strong>$2.0B of the YoY pretax improvement</strong> — nearly half. This is economically real (higher-rate new sales-type leases), but it is a volatile, interest-rate-sensitive contributor to margin expansion rather than a structural software-margin story.</li>
+<li><strong>R&amp;D +$837M (+11.2%)</strong> to $8,316M (12.3% of revenue) and <strong>SG&amp;A +$435M (+2.2%)</strong> — SG&amp;A leverage is genuine and positive; R&amp;D reinvestment is consistent.</li>
+<li><strong>Non-operating volatility (verified):</strong> derivative gains swung from −$515M to +$641M and FX from +$458M to −$993M; net of both, FY2025 was ~$295M worse than FY2024, so these lines did not inflate FY2025 net — but they did <strong>distort the FY2022 trough</strong> (derivative losses ≈ −$1,153M and realized securities losses −$278M in FY2022, per cash-flow/income rows) and add multi-year noise to the earnings trajectory.</li>
+<li>A residual gap of roughly <strong>$2.4–2.9B of the FY2025 pretax bridge is not explainable from the extracted rows</strong> (likely items such as restructuring, pension settlement effects, divestiture results, and other income/(expense) not itemized). This is a data limitation, not a finding.</li>
+</ul>
+<p><strong>Multi-year signaling:</strong> the FY2022 collapse (−$4.0B pretax swing vs. FY2021) and the FY2025 surge (+78%) are both disproportionately driven by below-the-line, mark-to-market and financing items. The &quot;operating engine&quot; (revenue +7.6%, SG&amp;A leverage, deferred revenue +16%) is solid; the <em>level and volatility</em> of reported earnings carry more accounting noise than revenue trends.</p>
+<p>---</p>
+<h2>5. Tax Accounting Signals</h2>
+<p>The tax line is the single most distinctive accounting pattern in the five-year window:</p>
+<table><tbody>
+<tr><td></td><td>FY2021</td><td>FY2022</td><td>FY2023</td><td>FY2024</td><td>FY2025</td></tr>
+<tr><td>Pretax income (cont. ops)</td><td>4,837</td><td>1,156</td><td>8,690</td><td>5,797</td><td>10,328</td></tr>
+<tr><td>Book income tax (benefit)</td><td>124</td><td>(626)</td><td>1,176</td><td>(218)</td><td>(242)</td></tr>
+<tr><td><strong>Book ETR</strong></td><td><strong>2.6%</strong></td><td><strong>−54.2%</strong></td><td><strong>13.5%</strong></td><td><strong>−3.8%</strong></td><td><strong>−2.3%</strong></td></tr>
+<tr><td>Cash income taxes paid</td><td>2,103</td><td>1,865</td><td>1,564</td><td>1,723</td><td>1,948</td></tr>
+<tr><td>Cash taxes ÷ pretax</td><td>43.5%</td><td>~161%</td><td>18.0%</td><td>29.7%</td><td>18.9%</td></tr>
+<tr><td>Deferred tax adjustment (CFO)</td><td>(2,001)</td><td>(2,726)</td><td>(1,114)</td><td>(2,330)</td><td>(957)</td></tr>
+</tbody></table>
+<ul>
+<li><strong>Persistent book-tax divergence (verified):</strong> book ETR has been negative or far below the 21% US statutory rate every year, while actual cash tax payments run ~19–30% of pretax. Deferred tax benefits are recognized in every year of the window (adjustments of −$957M to −$2,726M), meaning book expense is persistently below cash tax — a conservative posture toward reported income (book income is not being inflated by deferring cash taxes), but the negative ETR itself is driven by credits, non-US income mix, and discrete items not visible at row level.</li>
+<li><strong>Domestic pretax losses are structural (verified):</strong> domestic pretax income was negative in all five years (FY2025: −$236M; FY2024: −$3,405M; FY2022: −$6,602M) while consolidated pretax was positive — profit is concentrated outside the US. This is the classic profile that invites transfer-pricing scrutiny and, more importantly, <strong>Pillar Two (15% global minimum tax) exposure</strong> that could normalize the effective rate upward if the low-tax jurisdiction mix is challenged.</li>
+<li><strong>Deferred tax liability reversal (verified):</strong> net DTLs declined from $3,956M (FY2021) to $781M (FY2025), an 80% drawdown. Reversals of this magnitude are typically one-time by nature; the FY2025 book ETR (−2.3%) resting on a shrinking DTL base raises the risk that the favorable ETR is not sustainable at current levels without new credits or discrete items. The composition (DTAs, valuation allowances, jurisdictional mix) is not disclosed in the extracted rows — flagged as a note-level item to verify.</li>
+</ul>
+<p><strong>Signal:</strong> recurring negative/very low ETR plus an 80% DTL drawdown = the tax tail has been a <em>relatively stable</em> beneficiary of reported earnings; sustainability risk is material in both directions (Pillar Two, audit outcomes, DTL exhaustion).</p>
+<p>---</p>
+<h2>6. Acquisition Accounting and Balance-Sheet Signals</h2>
+<ul>
+<li><strong>Goodwill intensity (verified):</strong> Goodwill rose 11.5% to $67,717M (FY2025), now <strong>44.6% of total assets and 2.07× parent equity</strong>. Cash paid for businesses was $8,294M in FY2025 vs. a $7,011M goodwill increase — roughly <strong>85% of purchase price allocated to goodwill</strong>, consistent with a premium-priced strategic acquisition (e.g., HashiCorp closed in FY2025) and a marker of limited separable intangible value or heavy going-concern value.</li>
+<li><strong>Zero impairments, ever-growing carrying value (verified):</strong> Goodwill impairment is tagged $0 in all five years despite 44% asset intensity and an acquisition cadence of $2.3–8.3B per year. With goodwill now &gt;2× equity, any impairment would flow essentially one-for-one into equity; this is a forward-looking impairment-risk model item even though no current evidence of overstatement exists in the data.</li>
+<li><strong>Intangibles amortization rising (verified):</strong> amortization increased from $2,287M (FY2023) to $2,737M (FY2025); combined D&amp;A ≈ $5.0B in FY2025. Recurring acquisition amortization is a normal feature of the model but adds headwind to organic earnings growth.</li>
+<li><strong>Leverage (verified):</strong> long-term debt rose to $54,836M (+9.9% YoY; from $44,917M in FY2021). Interest coverage recovered to ~6.3× in FY2025 (from ~4.4× in FY2024 and ~2.0× in FY2022) purely on the earnings surge. Debt-funded M&amp;A is the visible pattern; debt-to-equity improved to ~1.7× only because equity grew 19.5%.</li>
+<li><strong>Working capital structure (verified):</strong> current assets ($36,944M) are marginally below current liabilities ($38,658M) — current ratio ≈ 0.96. As with prior years, this reflects the large current deferred-revenue balance ($16,101M) and is long-standing IBM structure, not a liquidity alarm (cash $13,587M, CFO $13.2B).</li>
+<li><strong>Pension/AOCI (verified):</strong> AOCI remains deeply negative (−$15,713M) though much improved from −$23,234M (FY2021); FY2025 drew down slightly vs. FY2024. Reclassifications out of AOCI swung to +$557M pretax in FY2025 (+$564M vs. FY2024) — actuarial/prior-service amortization is recurring and assumption-sensitive; the biggest actuarial swings bypass the income statement through OCI.</li>
+<li><strong>Dividend vs. earnings (verified):</strong> FY2024 dividends ($6,147M) exceeded GAAP net income ($6,023M, ~102% payout) — cash-covered by CFO ($13.4B), but a payout anomaly that FY2025&#x27;s earnings gain normalized (59%). Worth tracking if earnings growth reverts.</li>
+</ul>
+<p>---</p>
+<h2>7. Ranked Anomaly Watchlist</h2>
+<p>1. <strong>Cash-conversion compression amid a +76% earnings jump (FY2025).</strong> Verified gap: NI +$4,570M vs. CFO −$252M. Highest-priority item; requires note-level decomposition of working capital/other items to fully explain.</p>
+<p>2. <strong>Receivables growth (19.2%) vs. revenue growth (7.6%), DSO +4 days.</strong> Watch for billing-term changes, channel behavior, and acquisition-timing effects.</p>
+<p>3. <strong>Persistent negative/very low book ETR with an 80% DTL drawdown and structurally negative domestic pretax.</strong> Sustainability risk under Pillar Two and audit outcomes; book ETR is not a reliable run-rate tax assumption.</p>
+<p>4. <strong>Financing/leasing-line contribution to FY2025 margin expansion (~$2.0B of the pretax move).</strong> Economically real but rate-driven and volatile; treat gross-profit growth as partly interest-rate economics, not pure software mix.</p>
+<p>5. <strong>Goodwill at 2.1× equity with zero impairments and 85% goodwill allocation on FY2025 acquisitions.</strong> Forward-looking impairment risk; requires reporting-unit and fair-value disclosures not present in this dataset.</p>
+<p>6. <strong>SBC +30.8% YoY, 16% of net income.</strong> Dilution/expense discipline watch.</p>
+<p>7. <strong>Financing-breakdown opacity.</strong> Extracted rows show no explicit repurchase or debt-issuance/repayment lines; CFF of −$3,829M in FY2025 is only partially decomposable from available evidence.</p>
+<p>---</p>
+<h2>8. Conclusion</h2>
+<p>The FY2021–FY2025 data show a company whose <strong>headline accounting quality is solid</strong> — CFO materially exceeds net income every year, deferred revenue growth (a conservative forward indicator) is strong, SG&amp;A is well controlled, and DTLs are being drawn down conservatively rather than built up to flatter earnings. There is <strong>no evidence of revenue fabrication, goodwill impairment deferral (documented internally), or aggressive revenue recognition</strong> in the verified rows.</p>
+<p>The anomalies that do surface are concentrated in <strong>FY2025</strong>: an earnings surge whose cash conversion lagged, receivables growing 2.5× revenue, a ~$2.0B financing/leasing contribution to margin, rising SBC, and a tax profile (negative book ETR; −80% DTL trajectory) that flatters the run-rate but carries Pillar Two and audit sustainability risk. Combined with goodwill now exceeding 2× equity, the FY2025 results should be read as <strong>good-quality core performance with a meaningful non-operating and financing assist, and a tax/goodwill structure that bears close monitoring</strong> rather than as evidence of accounting manipulation.</p>
+<p><strong>Material data limitations:</strong> (i) gross profit/COGS rows are normalized estimates, not IBM GAAP lines; (ii) ~$2.4–2.9B of the FY2025 pretax bridge and ~$3–4B of the CFO reconciliation are not itemized in the extracted rows; (iii) no reporting-unit goodwill, valuation-allowance, pension-assumption, tax-credit, or full financing disclosures are available in this dataset — those note-level items are required to finalize the impairment-risk and ETR-sustainability assessments.</p></main></body>
+</html>

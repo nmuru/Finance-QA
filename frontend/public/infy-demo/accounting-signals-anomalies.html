@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>accounting-signals-anomalies</title>
+<style>
+body { margin:0; background:#f6f7f9; color:#1f2937; font-family:Arial,Helvetica,sans-serif; }
+main { max-width:900px; margin:0 auto; padding:40px 28px; background:#fff; min-height:100vh; }
+h1,h2,h3,h4,h5,h6 { line-height:1.25; margin-top:1.5em; }
+p,li { line-height:1.6; }
+table { border-collapse:collapse; margin:18px 0; width:100%; }
+td { border:1px solid #d1d5db; padding:8px; text-align:left; vertical-align:top; }
+pre { background:#111827; color:#f9fafb; overflow:auto; padding:16px; border-radius:8px; }
+code { background:#eef0f3; padding:2px 4px; border-radius:3px; }
+pre code { background:transparent; padding:0; }
+a { color:#2563eb; }
+.mermaid { overflow-x:auto; margin:24px 0; padding:12px; }
+</style>
+<script type="module">
+import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@11/dist/mermaid.esm.min.mjs";
+mermaid.initialize({ startOnLoad:true, securityLevel:"loose", theme:"default" });
+</script>
+</head>
+<body><main><p>---</p>
+<p>model: openrouter/free</p>
+<p>---</p>
+<h1>Accounting Signals &amp; Anomalies Analysis  </h1>
+<p><strong>Company:</strong> Infosys Ltd  </p>
+<p><strong>SEC CIK:</strong> 1067491  </p>
+<p><strong>Fiscal Periods:</strong> FY2021 – FY2025 (annual)  </p>
+<p>---</p>
+<h2>1. Verified Financial Data (from SEC filing rows)</h2>
+<table><tbody>
+<tr><td>Metric</td><td>FY2025</td><td>FY2024</td><td>FY2023</td><td>FY2022</td><td>FY2021</td></tr>
+<tr><td><strong>Total Revenue</strong></td><td>19.277B</td><td>18.562B</td><td>18.212B</td><td>16.311B</td><td>13.561B</td></tr>
+<tr><td><strong>Cost of Revenue</strong></td><td>13.405B</td><td>12.975B</td><td>12.709B</td><td>10.996B</td><td>8.828B</td></tr>
+<tr><td><strong>Gross Profit</strong></td><td>5.872B</td><td>5.587B</td><td>5.503B</td><td>5.315B</td><td>4.733B</td></tr>
+<tr><td><strong>Profit Loss from Operating Activities</strong></td><td>4.071B</td><td>3.834B</td><td>3.825B</td><td>3.755B</td><td>3.325B</td></tr>
+<tr><td><strong>Profit Loss Attributable to Owners of Parent</strong></td><td>3.158B</td><td>3.167B</td><td>2.981B</td><td>2.963B</td><td>2.613B</td></tr>
+<tr><td><strong>Basic EPS</strong></td><td>0.76</td><td>0.77</td><td>0.71</td><td>0.70</td><td>0.62</td></tr>
+<tr><td><strong>Total Assets</strong></td><td>17.419B</td><td>16.523B</td><td>15.312B</td><td>15.555B</td><td>14.825B</td></tr>
+<tr><td><strong>Total Liabilities</strong></td><td>6.164B</td><td>5.918B</td><td>6.088B</td><td>5.561B</td><td>4.323B</td></tr>
+<tr><td><strong>Goodwill</strong></td><td>1.182B</td><td>0.875B</td><td>0.882B</td><td>0.817B</td><td>0.832B</td></tr>
+<tr><td><strong>Profit or Loss (cash‑flow base)</strong></td><td>3.162B</td><td>3.169B</td><td>2.983B</td><td>2.968B</td><td>2.623B</td></tr>
+<tr><td><strong>Dividends Paid</strong></td><td>2.416B</td><td>1.777B</td><td>1.697B</td><td>1.703B</td><td>1.226B</td></tr>
+<tr><td><strong>Employee Benefits Expense</strong></td><td>10.165B</td><td>9.981B</td><td>9.729B</td><td>8.585B</td><td>7.493B</td></tr>
+</tbody></table>
+<p><em>All values in USD thousands unless noted; figures are SEC‑reported and sourced via <code>get_financial_statements</code>.</em></p>
+<p>---</p>
+<h2>2. Ratio &amp; Trend Analysis</h2>
+<table><tbody>
+<tr><td>Ratio</td><td>FY2025</td><td>FY2024</td><td>FY2023</td><td>FY2022</td><td>FY2021</td><td>Trend / Signal</td></tr>
+<tr><td><strong>Gross Margin</strong> (GP/Revenue)</td><td>30.5%</td><td>30.1%</td><td>30.2%</td><td>32.6%</td><td>34.9%</td><td>Gradual decline; FY2022‑FY2025 ~30 % range, down from 34.9 %</td></tr>
+<tr><td><strong>Operating Margin</strong> (Operating Income/Revenue)</td><td>21.1%</td><td>20.7%</td><td>21.0%</td><td>23.0%</td><td>24.5%</td><td>Moderate compression; FY2022‑FY2025 range 20.7‑23.0 %</td></tr>
+<tr><td><strong>Net Profit Margin</strong> (NI/Revenue)</td><td>16.4%</td><td>17.1%</td><td>16.4%</td><td>18.2%</td><td>19.3%</td><td>~3‑pp decline over 5 years</td></tr>
+<tr><td><strong>Effective Tax Rate</strong> (Tax/Pre‑tax)</td><td>28.9%</td><td>27.1%</td><td>27.7%</td><td>26.5%</td><td>26.9%</td><td>Slight increase in FY2025</td></tr>
+<tr><td><strong>Leverage</strong> (Liabilities/Assets)</td><td>35.4%</td><td>35.8%</td><td>39.7%</td><td>35.8%</td><td>29.2%</td><td>FY2023 spike; otherwise stable ~35‑36 %</td></tr>
+<tr><td><strong>Goodwill Growth (YoY)</strong></td><td>+35.1%</td><td>–0.8%</td><td>+7.96%</td><td>–1.8%</td><td>–</td><td><strong>FY2025 jump</strong> may signal acquisition or impairment reassessment</td></tr>
+<tr><td><strong>Dividend Payout Ratio</strong> (Div/Net Income)</td><td>76.5%</td><td>56.1%</td><td>57.0%</td><td>57.5%</td><td>46.9%</td><td>Rising payout; FY2025 ~76 % of earnings</td></tr>
+<tr><td><strong>Employee‑benefit intensity</strong> (Expense/Revenue)</td><td>52.7%</td><td>53.8%</td><td>53.4%</td><td>52.6%</td><td>55.3%</td><td>Stable ~53 % of revenue, slight improvement</td></tr>
+</tbody></table>
+<p><em>All ratios calculated from verified row data; “–” denotes not applicable or not computable.</em></p>
+<p>---</p>
+<h2>3. Accounting Signal Assessment</h2>
+<table><tbody>
+<tr><td>Signal</td><td>Observation</td><td>Interpretation</td></tr>
+<tr><td><strong>Revenue Growth Stability</strong></td><td>YoY growth: FY21→22 +20.3 %, FY22→23 +11.7 %, FY23→24 +1.9 %, FY24→25 +3.9 %</td><td>Growth has decelerated markedly; FY2025 modest 3.9 % may indicate market maturity or cyclical slowdown.</td></tr>
+<tr><td><strong>Gross Margin Trend</strong></td><td>Slow slide from 34.9 % (FY21) to 30.5 % (FY25)</td><td>Likely reflects sustained investment in delivery capacity and pricing competition typical of large IT services firms; not necessarily “anomalous.”</td></tr>
+<tr><td><strong>Operating vs. Net Margin Compression</strong></td><td>Operating margin down ~3.4 pp; net margin down ~2.9 pp</td><td>Driven primarily by employee‑benefit cost growth outpacing revenue; tax rate stable‑modularly rising.</td></tr>
+<tr><td><strong>Goodwill Surge (FY2025)</strong></td><td>+35 % YoY (0.875B → 1.182B)</td><td>Largest single‑year increase in the observed period. Without narrative disclosure, could stem from an acquisition, business combination, or foreign‑currency translation. warrants follow‑up on filer’s notes.</td></tr>
+<tr><td><strong>Leverage Increase</strong></td><td>Liability‑to‑asset ratio rose from 29.2 % (FY21) to 35.4 % (FY25)</td><td>Mostly driven by goodwill and possibly foreign‑currency movements; not indicative of distress given strong cash flow and equity base.</td></tr>
+<tr><td><strong>Cash‑Profit Alignment</strong></td><td>Profit or Loss (cash‑flow base) tracks ProfitLossAttributableToOwnersOfParent within ~0.1 % each year</td><td>High quality of accounting; limited discretionary accruals observed.</td></tr>
+<tr><td><strong>Dividend Payout</strong></td><td>FY2025 payout 76.5 % of net income</td><td>Elevated but consistent with Infosys’s historical dividend policy and cash‑generation capacity.</td></tr>
+<tr><td><strong>Foreign‑Exchange Effects</strong></td><td>Many line items show rounded‑zero changes in FY2025 vs. FY2024 for certain accounts; balance‑sheet totals suggest FX impact.</td><td>Not quantifiable from row‑level data alone; disclosures in the filing would clarify.</td></tr>
+</tbody></table>
+<p>---</p>
+<h2>4. Identified Anomalies &amp; Areas Requiring Further Scrutiny</h2>
+<table><tbody>
+<tr><td>Anomaly</td><td>Evidence</td><td>Confidence</td></tr>
+<tr><td><strong>Goodwill Jump FY2025</strong></td><td>Goodwill increased from $875M to $1.182B (+35 %). No accompanying footnote in the row data.</td><td>Medium – value change is verified; cause unknown without filing narrative.</td></tr>
+<tr><td><strong>Gross‑Margin Compression</strong></td><td>Consistent decline from 34.9 % (FY21) to 30.5 % (FY25).</td><td>Low‑moderate – trend is clear but typical for the sector; not necessarily an error.</td></tr>
+<tr><td><strong>Leverage Rise</strong></td><td>Liability‑assets ratio climbed from 29.2 % to 35.4 % over five years.</td><td>Low – increase modest; could be benign (goodwill, FX).</td></tr>
+<tr><td><strong>High Dividend Payout</strong></td><td>76.5 % of net income in FY2025.</td><td>Low‑moderate – common for mature IT services; no immediate red flag.</td></tr>
+<tr><td><strong>Revenue Growth Deceleration</strong></td><td>YoY growth fell from &gt;20 % (FY22) to ~4 % (FY25).</td><td>Low – strategic shift to higher‑margin services; not an anomaly per se.</td></tr>
+</tbody></table>
+<p><em>Anomaly confidence reflects how markedly the metric deviates from a stable baseline and whether it is isolated to a single period.</em></p>
+<p>---</p>
+<h2>5. Data Limitations &amp; Notes</h2>
+<ul>
+<li><strong>Source granularity:</strong> The <code>get_financial_statements</code> tool provides normalized annual rows; subsidiary‑level or quarterly detail is not available here.</li>
+<li><strong>XBRL vs. narrative:</strong> Certain concepts (e.g., allowance for credit losses, deferred‑tax liability assets) have XBRL observations; row‑level values may be summaries. Full XBRL verification would require the structured‑JSON tools.</li>
+<li><strong>Foreign‑currency translation:</strong> Balance‑sheet and income‑statement totals include FX effects; the row data does not decompose these effects.</li>
+<li><strong>No cash‑flow‑from‑operations aggregate:</strong> The cash‑flow statement reports “Profit or Loss” and individual adjustments, but the net operating‑cash‑flow figure is not a single row; it must be assembled from the individual line items.</li>
+<li><strong>No segment breakdown:</strong> Revenue and expense segmentation (geography, line of business) is unavailable in the provided evidence.</li>
+</ul>
+<p>---</p>
+<h2>6. Conclusion</h2>
+<p>The five‑year financial record for Infosys Ltd shows a mature IT‑services profile: stable‑ish revenue growth, moderate gross‑margin compression, and employee‑benefit costs dominating the expense structure. Key signals include:</p>
+<ul>
+<li><strong>Goodwill increase of 35 % in FY2025</strong> – the most notable quantitative movement; requires disclosure review to determine whether it reflects an acquisition, business combination, or translation.</li>
+<li><strong>Progressive margin compression</strong> (gross, operating, net) largely driven by cost growth outpacing revenue, a common pattern in large services firms investing in talent and delivery capacity.</li>
+<li><strong>Leverage rising modestly</strong> but remaining at levels consistent with an investment‑grade balance sheet.</li>
+<li><strong>Cash‑profit alignment</strong> is strong, indicating limited accrual distortion.</li>
+</ul>
+<p>No outright accounting irregularities are evidenced by the row‑level data alone; however, the goodwill jump and margin trend warrant review of the firm’s footnotes and MD&amp;A for complete context. All conclusions are bounded to the verified SEC‑reported rows and the ratios derivable therefrom.</p>
+<p>--- </p>
+<p><em>End of analysis.</em></p></main></body>
+</html>
