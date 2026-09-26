@@ -811,3 +811,25 @@ button {
   resize: vertical;
   min-height: 140px;
 }
+
+
+.answer-panel {
+  margin-top: 28px;
+  padding: 22px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: white;
+}
+
+.answer-panel h2 {
+  margin: 4px 0 18px;
+  color: var(--text);
+  font-size: 20px;
+}
+
+.answer-content {
+  color: #555d67;
+  font-size: 15px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
