@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { ChangeEvent, FormEvent, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
@@ -21,6 +21,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 export default function Home() {
   const [companyName, setCompanyName] = useState("");
   const [query, setQuery] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -45,12 +46,8 @@ export default function Home() {
         method: "POST",
         headers: {
           Accept: "text/event-stream",
-          "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          company_name: company,
-          query: question,
-        }),
+        body: formData,
       });
 
       if (!response.ok) {
@@ -145,6 +142,21 @@ export default function Home() {
                 required
                 disabled={loading}
               />
+            </label>
+
+            <label className="qa-field">
+              <span>Supporting Documents <small>(optional)</small></span>
+              <input
+                type="file"
+                multiple
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                  setFiles(Array.from(event.target.files ?? []))
+                }
+                disabled={loading}
+              />
+              {files.length > 0 && (
+                <small>{files.length} file{files.length === 1 ? "" : "s"} selected</small>
+              )}
             </label>
 
             <button type="submit" disabled={loading}>
