@@ -1,7 +1,7 @@
 @echo off
 
-set "BACKEND=C:\Financial-Dossier\Financial-Analysis\backend"
-set "FRONTEND=C:\Financial-Dossier\Financial-Analysis\frontend"
+set "BACKEND=C:\Finance-QA\Financial-QA\backend"
+set "FRONTEND=C:\Finance-QA\Financial-QA\frontend"
 
 set "DEBUG_AGENT=true"
 
