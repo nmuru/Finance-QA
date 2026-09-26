@@ -233,7 +233,7 @@ async def analyze(request: Request) -> StreamingResponse:
         requested_run_id = str(form.get("work_id") or "").strip() or None
         total_upload_bytes = 0
 
-        for value in form.values():
+        for _, value in form.multi_items():
             if not isinstance(value, UploadFile):
                 continue
             if len(uploaded_files) >= 10:
