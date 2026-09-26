@@ -42,6 +42,11 @@ export default function Home() {
     setError("");
 
     try {
+      const formData = new FormData();
+      formData.append("company_name", company);
+      formData.append("query", question);
+      files.forEach((file) => formData.append("files", file));
+
       const response = await fetch(`${API_BASE_URL}/api/analyze`, {
         method: "POST",
         headers: {
