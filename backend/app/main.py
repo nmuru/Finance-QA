@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(title="ReverseEngineer-SDLC API", version="0.2.0")
 app.add_middleware(CORSMiddleware, 
                 #    allow_origins=[origin.strip() for origin in settings.allowed_origins.split(",") if origin.strip()], 
-                   allow_origins="https://financial-dossier.vercel.app",
+                   allow_origins="http://localhost:3000",
                    allow_credentials=True, allow_methods=["*"], allow_headers=["*"])
 
 _run_controls: dict[str, RunControl] = {}

@@ -19,8 +19,8 @@ type QueryEvent =
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function Home() {
-  const [companyName, setCompanyName] = useState("");
-  const [query, setQuery] = useState("");
+  const [companyName, setCompanyName] = useState("AAPL");
+  const [query, setQuery] = useState("What was Apple's capital allocation efficiency (dividend + buyback) as percentage of net income for 2024?");
   const [files, setFiles] = useState<File[]>([]);
   const [answer, setAnswer] = useState("");
   const [loading, setLoading] = useState(false);
@@ -123,7 +123,7 @@ export default function Home() {
       <main className="landing">
         <div className="landing-card">
           <div className="eyebrow">FINANCE QA</div>
-          <h1>Ask a financial question about a company.</h1>
+          <h1>Agentic RAG for financial Q&A and benchmark evaluation.</h1>
 
           <form onSubmit={askQuestion} className="repo-form qa-form">
             <label className="qa-field">
