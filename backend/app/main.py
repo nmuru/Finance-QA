@@ -224,6 +224,7 @@ def download_analysis(work_id: str) -> FileResponse:
 def analyze(request: AnalyzeRequest) -> StreamingResponse:
     """Run the analysis pipeline and stream completed phases and actionable failures."""
     company_name = request.company_name
+    query = request.query.strip()
     event_queue: Queue[dict[str, Any]] = Queue()
     requested_run_id = request.work_id
 
@@ -233,8 +234,16 @@ def analyze(request: AnalyzeRequest) -> StreamingResponse:
         if existing and existing.snapshot().get("status") in {"running", "cancelling"}:
             raise HTTPException(status_code=409, detail="An analysis with this work ID is already running.")
 
+    if not query:
+        raise HTTPException(status_code=422, detail="query cannot be empty")
+
     if request.mode not in {"parallel", "sequence"}:
         raise HTTPException(status_code=422, detail="mode must be 'parallel' or 'sequence'")
+
+    selected_phases = request.selected_phases or [phase[0] for phase in __import__("app.analyzer", fromlist=["PHASES"]).PHASES]
+    provider = (request.provider or settings.model_provider).strip().lower()
+    model = (request.model or settings.agent_model).strip()
+    api_key = (request.api_key or (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key) or "").strip()
 
     try:
         try:
@@ -248,7 +257,7 @@ def analyze(request: AnalyzeRequest) -> StreamingResponse:
         output_run_dir = _output_root() / resolved_run_id
         output_run_dir.mkdir(parents=True, exist_ok=True)
         control = RunControl(resolved_run_id, output_run_dir / "run-state.json")
-        control.initialize(company_name=company_name, selected_phases=request.selected_phases)
+        control.initialize(company_name=company_name, query=query, selected_phases=selected_phases)
         with _run_controls_lock:
             _run_controls[resolved_run_id] = control
     except HTTPException:
@@ -265,7 +274,7 @@ def analyze(request: AnalyzeRequest) -> StreamingResponse:
 
     def run_analysis() -> None:
         try:
-            results = analyze_repository(company_name, phases_per_batch=settings.phases_per_batch, batch_mode=request.mode, selected_phases=request.selected_phases, work_id=resolved_run_id, on_phase_complete=on_phase_complete, provider=request.provider, model=request.model, api_key=request.api_key, run_control=control, objective=request.objective)
+            results = analyze_repository(company_name, query=query, phases_per_batch=settings.phases_per_batch, batch_mode=request.mode, selected_phases=selected_phases, work_id=resolved_run_id, on_phase_complete=on_phase_complete, provider=provider, model=model, api_key=api_key, run_control=control, objective=request.objective)
             if control.is_cancelled():
                 if memory_guard.triggered.is_set():
                     control.finish("failed", MemoryCapacityError.user_message)
