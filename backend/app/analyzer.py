@@ -424,6 +424,7 @@ def answer_query(
     api_key: Optional[str] = None,
     work_id: Optional[str] = None,
     run_control: Optional[RunControl] = None,
+    uploaded_files: Optional[list[tuple[str, bytes]]] = None,
 ) -> dict:
     """Acquire controlled SEC evidence and answer one user query with the standard agent.
 
@@ -472,6 +473,25 @@ def answer_query(
             repository = download_company_facts(company_name, workspace, run_control=run_control)
             _check_cancelled(run_control)
 
+            # Optional user documents become additional read-only workspace resources.
+            # They are deliberately not embedded or indexed; the same read_file/list_files
+            # tools used elsewhere in the agent can retrieve them on demand.
+            uploaded_manifest = []
+            for original_name, content in uploaded_files or []:
+                safe_name = Path(original_name).name.strip()
+                if not safe_name or safe_name in {".", ".."}:
+                    continue
+                target = repository / "uploaded-documents" / safe_name
+                target.parent.mkdir(parents=True, exist_ok=True)
+                target.write_bytes(content)
+                uploaded_manifest.append({
+                    "name": safe_name,
+                    "path": str(target.relative_to(repository)),
+                    "bytes": len(content),
+                })
+            if uploaded_manifest:
+                diagnostics.run_event("user_documents_added", files=uploaded_manifest)
+
             financial_data = collect_financial_statements(
                 company_name,
                 historical_periods=5,
@@ -492,6 +512,7 @@ def answer_query(
                     if isinstance(value, dict)
                 },
                 "instruction": "Retrieve actual financial evidence through get_financial_statements before making quantitative claims.",
+                "user_documents": uploaded_manifest,
             }
             financial_context = json.dumps(manifest, ensure_ascii=False)
 
