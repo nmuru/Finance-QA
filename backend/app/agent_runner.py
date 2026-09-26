@@ -806,7 +806,7 @@ Question: {query}
 QUERY-SPECIFIC EVIDENCE CONTEXT
 {financial_context}
 
-Before answering, briefly determine the evidence needed. Retrieve only that evidence with the available tools, then give the concise final answer.
+Before answering, briefly determine the evidence needed. First read the query skill guidance with read_resource using SKILL.md, then retrieve only the evidence needed with the available tools. If a focused skill is relevant, read that skill resource too. Then give the concise final answer.
 """
     return await _run_agent(
         phase="query",
