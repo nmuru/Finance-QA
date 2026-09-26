@@ -13,7 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse, StreamingResponse
 
 from .agent_runner import AgentRunnerError
-from .analyzer import analyze_repository
+from .analyzer import analyze_repository, answer_query
 from .config import settings
 from .memory_guard import MemoryCapacityError, MemoryCapacityGuard, capacity_diagnostics
 from .exporter import create_download_package
@@ -222,11 +222,16 @@ def download_analysis(work_id: str) -> FileResponse:
 
 @app.post("/api/analyze")
 def analyze(request: AnalyzeRequest) -> StreamingResponse:
-    """Run the analysis pipeline and stream completed phases and actionable failures."""
-    company_name = request.company_name
+    """Answer one financial query using the standard query agent."""
+    company_name = request.company_name.strip()
     query = request.query.strip()
     event_queue: Queue[dict[str, Any]] = Queue()
     requested_run_id = request.work_id
+
+    if not company_name:
+        raise HTTPException(status_code=422, detail="company_name cannot be empty")
+    if not query:
+        raise HTTPException(status_code=422, detail="query cannot be empty")
 
     if requested_run_id:
         with _run_controls_lock:
@@ -234,30 +239,28 @@ def analyze(request: AnalyzeRequest) -> StreamingResponse:
         if existing and existing.snapshot().get("status") in {"running", "cancelling"}:
             raise HTTPException(status_code=409, detail="An analysis with this work ID is already running.")
 
-    if not query:
-        raise HTTPException(status_code=422, detail="query cannot be empty")
-
-    if request.mode not in {"parallel", "sequence"}:
-        raise HTTPException(status_code=422, detail="mode must be 'parallel' or 'sequence'")
-
-    selected_phases = request.selected_phases or [phase[0] for phase in __import__("app.analyzer", fromlist=["PHASES"]).PHASES]
     provider = (request.provider or settings.model_provider).strip().lower()
     model = (request.model or settings.agent_model).strip()
-    api_key = (request.api_key or (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key) or "").strip()
+    api_key = (
+        request.api_key
+        or (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key)
+        or ""
+    ).strip()
 
     try:
         try:
             ensure_available = __import__("app.memory_guard", fromlist=["ensure_memory_available"]).ensure_memory_available
-            ensure_available(MEMORY_MIN_AVAILABLE_MB, "analysis")
+            ensure_available(MEMORY_MIN_AVAILABLE_MB, "query")
         except MemoryCapacityError as exc:
-            logger.warning("Rejecting analysis because backend memory capacity is low: %s", exc)
+            logger.warning("Rejecting query because backend memory capacity is low: %s", exc)
             raise HTTPException(status_code=503, detail=exc.user_message) from exc
 
         resolved_run_id = requested_run_id or __import__("uuid").uuid4().hex
         output_run_dir = _output_root() / resolved_run_id
         output_run_dir.mkdir(parents=True, exist_ok=True)
         control = RunControl(resolved_run_id, output_run_dir / "run-state.json")
-        control.initialize(company_name=company_name, query=query, selected_phases=selected_phases)
+        # Keep the old phase state machinery available, but V1 tracks one logical query.
+        control.initialize(company_name=company_name, query=query, selected_phases=["query"])
         with _run_controls_lock:
             _run_controls[resolved_run_id] = control
     except HTTPException:
@@ -267,50 +270,87 @@ def analyze(request: AnalyzeRequest) -> StreamingResponse:
 
     memory_guard = MemoryCapacityGuard(control, MEMORY_CHECK_INTERVAL_SECONDS)
     memory_guard.start()
-    stream_run_id = {"value": resolved_run_id}
 
-    def on_phase_complete(phase_result: dict) -> None:
-        event_queue.put({"type": "phase_completed", "phase": phase_result["phase"], "phase_name": phase_result["phase_name"], "raw_analysis": phase_result["raw_analysis"], "raw_path": phase_result["raw_path"], "run_id": phase_result["run_id"], "provenance": phase_result.get("provenance")})
-
-    def run_analysis() -> None:
+    def run_query() -> None:
         try:
-            results = analyze_repository(company_name, query=query, phases_per_batch=settings.phases_per_batch, batch_mode=request.mode, selected_phases=selected_phases, work_id=resolved_run_id, on_phase_complete=on_phase_complete, provider=provider, model=model, api_key=api_key, run_control=control, objective=request.objective)
+            result = answer_query(
+                company_name=company_name,
+                query=query,
+                provider=provider,
+                model=model,
+                api_key=api_key,
+                work_id=resolved_run_id,
+                run_control=control,
+            )
             if control.is_cancelled():
                 if memory_guard.triggered.is_set():
                     control.finish("failed", MemoryCapacityError.user_message)
-                    logger.warning("Analysis stopped by memory capacity guard work_id=%s", resolved_run_id)
-                    event_queue.put({"type": "analysis_failed", "company_name": company_name, "run_id": resolved_run_id, "error": MemoryCapacityError.user_message})
+                    event_queue.put({
+                        "type": "analysis_failed",
+                        "company_name": company_name,
+                        "run_id": resolved_run_id,
+                        "error": MemoryCapacityError.user_message,
+                    })
                 else:
                     control.finish("cancelled")
-                    event_queue.put({"type": "analysis_cancelled", "company_name": company_name, "run_id": resolved_run_id, "completed_phases": list(results["results"].keys()), "failed_phases": results.get("failures", [])})
+                    event_queue.put({
+                        "type": "analysis_cancelled",
+                        "company_name": company_name,
+                        "run_id": resolved_run_id,
+                    })
             else:
                 control.finish("completed")
-                event_queue.put({"type": "analysis_completed", "company_name": company_name, "run_id": results["run_id"], "completed_phases": list(results["results"].keys()), "failed_phases": results.get("failures", [])})
+                event_queue.put({
+                    "type": "query_answered",
+                    "company_name": company_name,
+                    "query": query,
+                    "run_id": result["run_id"],
+                    "answer": result["answer"],
+                    "provenance": result.get("provenance"),
+                })
         except RunCancelled:
             if memory_guard.triggered.is_set():
                 control.finish("failed", MemoryCapacityError.user_message)
-                logger.warning("Analysis stopped by memory capacity guard work_id=%s", control.run_id)
-                event_queue.put({"type": "analysis_failed", "company_name": company_name, "run_id": control.run_id, "error": MemoryCapacityError.user_message})
+                event_queue.put({
+                    "type": "analysis_failed",
+                    "company_name": company_name,
+                    "run_id": control.run_id,
+                    "error": MemoryCapacityError.user_message,
+                })
             else:
                 control.finish("cancelled")
-                event_queue.put({"type": "analysis_cancelled", "company_name": company_name, "run_id": control.run_id, "completed_phases": list(control.snapshot()["completed_phases"]), "failed_phases": control.snapshot()["failures"]})
+                event_queue.put({
+                    "type": "analysis_cancelled",
+                    "company_name": company_name,
+                    "run_id": control.run_id,
+                })
         except (AgentRunnerError, ValueError) as exc:
             control.finish("failed", str(exc))
-            event_queue.put({"type": "analysis_failed", "company_name": company_name, "run_id": control.run_id, "error": str(exc)})
+            event_queue.put({
+                "type": "analysis_failed",
+                "company_name": company_name,
+                "run_id": control.run_id,
+                "error": str(exc),
+            })
         except Exception as exc:
-            control.finish("failed", f"Analysis failed due to an unexpected backend error: {type(exc).__name__}: {exc}")
-            logger.exception("Unexpected analysis failure: company_name=%s", company_name)
-            event_queue.put({"type": "analysis_failed", "company_name": company_name, "run_id": control.run_id, "error": f"Analysis failed due to an unexpected backend error: {type(exc).__name__}: {exc}"})
+            message = f"Analysis failed due to an unexpected backend error: {type(exc).__name__}: {exc}"
+            control.finish("failed", message)
+            logger.exception("Unexpected financial query failure: company_name=%s", company_name)
+            event_queue.put({
+                "type": "analysis_failed",
+                "company_name": company_name,
+                "run_id": control.run_id,
+                "error": message,
+            })
         finally:
             memory_guard.stop()
 
-    Thread(target=run_analysis, daemon=True).start()
+    Thread(target=run_query, daemon=True).start()
 
     async def event_stream():
         while True:
-            current_run_id = stream_run_id["value"]
             with _run_controls_lock:
-                active_control = _run_controls.get(current_run_id) if current_run_id else None
+                active_control = _run_controls.get(resolved_run_id)
             if active_control:
                 active_control.touch()
             try:
@@ -318,7 +358,16 @@ def analyze(request: AnalyzeRequest) -> StreamingResponse:
             except Empty:
                 continue
             yield f"data: {json.dumps(event, ensure_ascii=False)}\n\n"
-            if event["type"] in {"analysis_completed", "analysis_failed", "analysis_cancelled"}:
+            if event["type"] in {"query_answered", "analysis_failed", "analysis_cancelled"}:
                 break
 
-    return StreamingResponse(event_stream(), media_type="text/event-stream", headers={"Cache-Control": "no-cache", "Connection": "keep-alive", "X-Accel-Buffering": "no-cache"})
+    return StreamingResponse(
+        event_stream(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "Connection": "keep-alive",
+            "X-Accel-Buffering": "no-cache",
+        },
+    )
+
