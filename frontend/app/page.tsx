@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 type QueryEvent =
   | {
@@ -160,7 +162,7 @@ export default function Home() {
             <section className="answer-panel">
               <div className="eyebrow">ANSWER</div>
               <h2>{companyName}</h2>
-              <div className="answer-content">{answer}</div>
+              <div className="answer-content"><ReactMarkdown remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown></div>
             </section>
           )}
         </div>
