@@ -257,6 +257,21 @@ async def analyze(request: Request) -> StreamingResponse:
         company_name = parsed.company_name.strip()
         query = parsed.query.strip()
         requested_run_id = parsed.work_id
+        provider = (parsed.provider or settings.model_provider).strip().lower()
+        model = (parsed.model or settings.agent_model).strip()
+        api_key = (
+            parsed.api_key
+            or (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key)
+            or ""
+        ).strip()
+
+    if content_type.startswith("multipart/form-data"):
+        provider = settings.model_provider.strip().lower()
+        model = settings.agent_model.strip()
+        api_key = (
+            (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key)
+            or ""
+        ).strip()
 
     event_queue: Queue[dict[str, Any]] = Queue()
 
@@ -270,13 +285,6 @@ async def analyze(request: Request) -> StreamingResponse:
             existing = _run_controls.get(requested_run_id)
         if existing and existing.snapshot().get("status") in {"running", "cancelling"}:
             raise HTTPException(status_code=409, detail="An analysis with this work ID is already running.")
-
-    provider = settings.model_provider.strip().lower()
-    model = settings.agent_model.strip()
-    api_key = (
-        (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key)
-        or ""
-    ).strip()
 
     try:
         try:
