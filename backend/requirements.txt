@@ -7,3 +7,4 @@ openai-agents
 psutil
 tree-sitter-language-pack
 edgartools
+python-multipart
