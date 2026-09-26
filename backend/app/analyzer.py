@@ -13,7 +13,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Callable, Optional
 
-from .agent_runner import run_phase_agent
+from .agent_runner import run_phase_agent, run_query_agent
 from .cancellable_download import download_company_facts
 from .config import settings
 from .edgar_financials import collect_financial_statements
@@ -409,5 +409,116 @@ def analyze_repository(
             failed_phases=[failure["phase"] for failure in failures],
         )
         raise
+    finally:
+        diagnostics.stop()
+
+
+def answer_query(
+    company_name: str,
+    query: str,
+    provider: str = "openrouter",
+    model: str = "openrouter/free",
+    api_key: Optional[str] = None,
+    work_id: Optional[str] = None,
+    run_control: Optional[RunControl] = None,
+) -> dict:
+    """Acquire controlled SEC evidence and answer one user query with the standard agent.
+
+    The existing four-phase dossier pipeline remains available in analyze_repository()
+    for later integration, but is not used by the V1 query endpoint.
+    """
+    if not company_name or not company_name.strip():
+        raise ValueError("company_name cannot be empty")
+    if not query or not query.strip():
+        raise ValueError("query cannot be empty")
+    provider = (provider or "").strip().lower()
+    if provider not in {"openrouter", "openai"}:
+        raise ValueError("This backend currently supports OpenRouter and OpenAI through the OpenAI Agents SDK")
+    if not model or not model.strip():
+        raise ValueError("model cannot be empty")
+    if not api_key or not api_key.strip():
+        raise ValueError("api_key cannot be empty")
+
+    run_id = work_id or uuid.uuid4().hex
+    if not run_id.isalnum():
+        raise ValueError("work_id must contain only letters and numbers")
+
+    output_root = Path(settings.analysis_results_dir)
+    if not output_root.is_absolute():
+        output_root = Path(__file__).resolve().parents[1] / output_root
+    output_run_dir = output_root / run_id
+    output_run_dir.mkdir(parents=True, exist_ok=True)
+
+    diagnostics_dir = Path(settings.resource_diagnostics_dir)
+    if not diagnostics_dir.is_absolute():
+        diagnostics_dir = output_run_dir / diagnostics_dir
+    diagnostics = ResourceDiagnostics(
+        enabled=settings.resource_diagnostics_enabled,
+        output_dir=diagnostics_dir,
+        sample_interval_seconds=settings.resource_diagnostics_interval_seconds,
+        run_id=run_id,
+    )
+
+    try:
+        _check_cancelled(run_control)
+        diagnostics.start()
+        diagnostics.run_event("query_started", company_name=company_name, query=query, provider=provider, model=model)
+
+        with tempfile.TemporaryDirectory(prefix="financial-query-") as tmp:
+            workspace = Path(tmp)
+            repository = download_company_facts(company_name, workspace, run_control=run_control)
+            _check_cancelled(run_control)
+
+            financial_data = collect_financial_statements(
+                company_name,
+                historical_periods=5,
+                view="standard",
+            )
+            financial_data_json = json.dumps(financial_data, ensure_ascii=False)
+            (repository / "financial-data.json").write_text(financial_data_json, encoding="utf-8")
+            (output_run_dir / "financial-intelligence.json").write_text(financial_data_json, encoding="utf-8")
+
+            # The agent receives only a compact manifest; actual values remain behind tools.
+            historical = financial_data.get("historical") or financial_data.get("annual") or {}
+            manifest = {
+                "source": financial_data.get("source", "SEC via EdgarTools"),
+                "company": financial_data.get("company", {}),
+                "available_statements": {
+                    key: bool(value.get("available"))
+                    for key, value in historical.items()
+                    if isinstance(value, dict)
+                },
+                "instruction": "Retrieve actual financial evidence through get_financial_statements before making quantitative claims.",
+            }
+            financial_context = json.dumps(manifest, ensure_ascii=False)
+
+            answer, actual_model = run_query_agent(
+                company_name=company_name,
+                query=query,
+                repository=repository,
+                financial_context=financial_context,
+                provider=provider,
+                model=model,
+                api_key=api_key,
+                run_control=run_control,
+            )
+
+            answer_path = output_run_dir / "answer.md"
+            answer_path.write_text(answer + "\n", encoding="utf-8")
+            (output_run_dir / "provenance.json").write_text(
+                json.dumps({"model": actual_model, "company_name": company_name, "query": query}, indent=2),
+                encoding="utf-8",
+            )
+            if run_control:
+                run_control.phase_completed("query")
+            diagnostics.run_event("query_completed", model=actual_model, answer_chars=len(answer))
+
+            return {
+                "run_id": run_id,
+                "company_name": company_name,
+                "query": query,
+                "answer": answer,
+                "provenance": {"model": actual_model},
+            }
     finally:
         diagnostics.stop()
