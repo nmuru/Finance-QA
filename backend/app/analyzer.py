@@ -205,6 +205,7 @@ def _run_batch(
 
 def analyze_repository(
     company_name: str,
+    query: str = "",
     phases_per_batch: int = settings.phases_per_batch,
     number_of_batches: Optional[int] = None,
     batch_mode: str = "parallel",
@@ -219,6 +220,8 @@ def analyze_repository(
 ) -> dict:
     if not company_name or not company_name.strip():
         raise ValueError("company_name cannot be empty")
+    if not query or not query.strip():
+        raise ValueError("query cannot be empty")
     provider = (provider or "").strip().lower()
     if provider not in {"openrouter", "openai"}:
         raise ValueError("This backend currently supports OpenRouter and OpenAI through the OpenAI Agents SDK")
