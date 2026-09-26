@@ -786,6 +786,91 @@ Prioritize high-value financial evidence and synthesis. When the available evide
     return output, actual_model
 
 
+async def _run_query_agent(
+    *,
+    company_name: str,
+    query: str,
+    repository: Path,
+    financial_context: str,
+    model: str,
+    api_key: str,
+    provider: str,
+    output_run_dir: Path,
+    run_control: Optional[RunControl] = None,
+) -> tuple[str, str]:
+    """Run the standard financial query agent using the existing read-only tool layer."""
+    query_instructions = f"""USER QUERY
+Company: {company_name}
+Question: {query}
+
+QUERY-SPECIFIC EVIDENCE CONTEXT
+{financial_context}
+
+Before answering, briefly determine the evidence needed. Retrieve only that evidence with the available tools, then give the concise final answer.
+"""
+    return await _run_agent(
+        phase="query",
+        phase_name="Financial Query",
+        repository=repository,
+        phase_intelligence=query_instructions,
+        model=model,
+        api_key=api_key,
+        provider=provider,
+        previous_output=None,
+        output_run_dir=output_run_dir,
+        run_control=run_control,
+    )
+
+
+def run_query_agent(
+    *,
+    company_name: str,
+    query: str,
+    repository: Path,
+    financial_context: str,
+    provider: str = "openrouter",
+    model: str = "openrouter/free",
+    api_key: Optional[str] = None,
+    run_control: Optional[RunControl] = None,
+) -> tuple[str, str]:
+    """Run the standard financial query agent and return its answer plus actual model."""
+    if not api_key or not api_key.strip():
+        raise AgentRunnerError(f"An API key is required for provider '{provider}'.")
+    if not repository.is_dir():
+        raise AgentRunnerError(f"Repository path does not exist: {repository}")
+
+    run_id = getattr(run_control, "run_id", None) if run_control is not None else None
+    if not run_id and run_control is not None:
+        state_path = getattr(run_control, "state_path", None)
+        if state_path:
+            run_id = Path(state_path).parent.name
+    if not run_id:
+        raise AgentRunnerError("Could not determine the current analysis run ID.")
+
+    output_run_dir = PROJECT_ROOT / "output-content" / str(run_id)
+    try:
+        return asyncio.run(
+            _run_query_agent(
+                company_name=company_name,
+                query=query,
+                repository=repository,
+                financial_context=financial_context,
+                model=model,
+                api_key=api_key,
+                provider=provider,
+                output_run_dir=output_run_dir,
+                run_control=run_control,
+            )
+        )
+    except RunCancelled:
+        raise
+    except AgentRunnerError:
+        raise
+    except Exception as exc:
+        logger.exception("OpenAI Agents SDK failed during financial query")
+        raise AgentRunnerError(f"OpenAI Agents SDK failed during financial query: {exc}") from exc
+
+
 def run_phase_agent(phase: str, phase_name: str, repository: Path, phase_intelligence: str, previous_output: Optional[str] = None, provider: str = "openrouter", model: str = "openrouter/free", api_key: Optional[str] = None, run_control: Optional[RunControl] = None) -> tuple[str, str]:
     """Run one phase against a shared read-only repository workspace and return output plus actual model used."""
     if not api_key or not api_key.strip():
