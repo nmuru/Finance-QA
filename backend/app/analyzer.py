@@ -22,6 +22,8 @@ from .phase_intelligence import build_phase_intelligence
 from .resource_diagnostics import ResourceDiagnostics
 from .run_control import RunCancelled, RunControl
 
+# LEGACY DOSSIER PIPELINE — retained for later integration with query answers.
+# V1 /api/analyze does not call analyze_repository() or these four phases.
 PHASES = [
     ("revenue-earnings-engine", "Revenue & Earnings Engine"),
     ("financial-resilience", "Financial Resilience"),
@@ -203,6 +205,7 @@ def _run_batch(
     return results, failures
 
 
+# Legacy four-phase implementation retained intentionally for future integration.
 def analyze_repository(
     company_name: str,
     query: str = "",
