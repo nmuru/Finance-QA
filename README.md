@@ -1,6 +1,6 @@
-# RAG Finance QA
+# Agentic RAG for financial Q&A and benchmark evaluation
 
-RAG Finance QA is an agentic financial question-answering application built to explore retrieval-augmented generation for financial analysis and benchmark evaluation.
+RAG Finance QA is an agentic financial question-answering application built to explore retrieval-augmented generation for financial analysis and benchmark evaluation without conventional vector search based retrieval. 
 
 The current version uses an agent to decide what evidence is needed for a user's financial question, retrieve only the relevant evidence through read-only tools, and produce an evidence-based answer.
 
