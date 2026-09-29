@@ -257,21 +257,12 @@ async def analyze(request: Request) -> StreamingResponse:
         company_name = parsed.company_name.strip()
         query = parsed.query.strip()
         requested_run_id = parsed.work_id
-        provider = (parsed.provider or settings.model_provider).strip().lower()
-        model = (parsed.model or settings.agent_model).strip()
-        api_key = (
-            parsed.api_key
-            or (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key)
-            or ""
-        ).strip()
 
-    if content_type.startswith("multipart/form-data"):
-        provider = settings.model_provider.strip().lower()
-        model = settings.agent_model.strip()
-        api_key = (
-            (settings.openrouter_api_key if provider == "openrouter" else settings.openai_api_key)
-            or ""
-        ).strip()
+    # Provider, model, and credentials are backend-owned. They are never accepted
+    # from the client, so Render/local environment configuration is authoritative.
+    provider = settings.model_provider.strip().lower()
+    model = settings.agent_model.strip()
+    api_key = settings.openrouter_api_key.strip()
 
     event_queue: Queue[dict[str, Any]] = Queue()
 
