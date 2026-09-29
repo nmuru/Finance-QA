@@ -3,8 +3,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     model_provider: str = "openrouter"
-    openai_model: str = "openrouter/free"
-    openrouter_api_key: str = "<enter your openrouter API key here>"
+    openrouter_api_key: str = ""
+    openrouter_model: str = ""
+    openai_model: str = ""
     openai_api_key: str | None = None
     allowed_origins: str = "http://localhost:3000"
     phases_per_batch: int = 1
@@ -21,7 +22,7 @@ class Settings(BaseSettings):
 
     @property
     def agent_model(self) -> str:
-        return self.openai_model
+        return self.openrouter_model
 
 
 settings = Settings()
