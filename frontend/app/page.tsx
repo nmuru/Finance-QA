@@ -164,7 +164,7 @@ export default function Home() {
           <form onSubmit={askQuestion} className="qa-form">
             <div className="section-heading">
               <span>AI provider</span>
-              <small>Use your own API key, or leave it blank to use the hosted default.</small>
+              <small>Use your own API key for each session.</small>
             </div>
 
             <div className="provider-grid">
