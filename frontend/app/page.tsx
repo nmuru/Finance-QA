@@ -20,38 +20,65 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export default function Home() {
   const [companyName, setCompanyName] = useState("AAPL");
-  const [query, setQuery] = useState("What was Apple's capital allocation efficiency (dividend + buyback) as percentage of net income for 2024?");
+  const [query, setQuery] = useState(
+    "What was Apple's capital allocation efficiency (dividend + buyback) as percentage of net income for 2024?",
+  );
+  const [provider, setProvider] = useState("openrouter");
+  const [model, setModel] = useState("openrouter/free");
+  const [apiKey, setApiKey] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const [answer, setAnswer] = useState("");
+  const [usedModel, setUsedModel] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+
+  function handleProviderChange(nextProvider: string) {
+    setProvider(nextProvider);
+    if (nextProvider === "openrouter" && !model.trim()) {
+      setModel("openrouter/free");
+    } else if (nextProvider === "openai" && model === "openrouter/free") {
+      setModel("");
+    }
+  }
 
   async function askQuestion(event: FormEvent) {
     event.preventDefault();
 
     const company = companyName.trim();
     const question = query.trim();
+    const selectedModel = model.trim();
+    const selectedApiKey = apiKey.trim();
 
     if (!company || !question) {
-      setError("Enter both Company Name and Your Query.");
+      setError("Enter both a company and a financial question.");
+      return;
+    }
+    if (!selectedModel) {
+      setError("Enter the model ID you want to use.");
+      return;
+    }
+    if (!selectedApiKey) {
+      setError("Enter your API key to run this request.");
       return;
     }
 
     setLoading(true);
     setAnswer("");
+    setUsedModel("");
     setError("");
 
     try {
       const formData = new FormData();
       formData.append("company_name", company);
       formData.append("query", question);
+      formData.append("provider", provider);
+      formData.append("model", selectedModel);
+      formData.append("api_key", selectedApiKey);
       files.forEach((file) => formData.append("files", file));
 
       const response = await fetch(`${API_BASE_URL}/api/analyze`, {
         method: "POST",
-        headers: {
-          Accept: "text/event-stream",
-        },
+        headers: { Accept: "text/event-stream" },
         body: formData,
       });
 
@@ -95,6 +122,7 @@ export default function Home() {
 
           if (data.type === "query_answered") {
             setAnswer(data.answer);
+            setUsedModel(data.provenance?.model || selectedModel);
             setLoading(false);
           } else if (data.type === "analysis_failed") {
             setError(data.error);
@@ -116,70 +144,149 @@ export default function Home() {
       <header className="topbar">
         <div>
           <div className="brand">Finance QA</div>
-          <div className="tagline">Ask questions about a company’s financials</div>
+          <div className="tagline">Agentic RAG for financial questions</div>
         </div>
+        <div className="byok-badge">BYOK · Bring Your Own Key</div>
       </header>
 
       <main className="landing">
-        <div className="landing-card">
-          <div className="eyebrow">FINANCE QA</div>
-          <h1>Agentic RAG for financial Q&A and benchmark evaluation.</h1>
+        <div className="landing-card qa-card">
+          <div className="hero-row">
+            <div>
+              <div className="eyebrow">FINANCE QA</div>
+              <h1>Ask a financial question. Let the agent find the evidence.</h1>
+              <p className="landing-copy">
+                Finance QA retrieves targeted financial evidence, works through the question, and returns a concise answer with the relevant figures and periods.
+              </p>
+            </div>
+          </div>
 
-          <form onSubmit={askQuestion} className="repo-form qa-form">
+          <form onSubmit={askQuestion} className="qa-form">
+            <div className="section-heading">
+              <span>AI provider</span>
+              <small>Use your own API key for each session.</small>
+            </div>
+
+            <div className="provider-grid">
+              <label className="qa-field">
+                <span>Provider</span>
+                <select
+                  value={provider}
+                  onChange={(event) => handleProviderChange(event.target.value)}
+                  disabled={loading}
+                >
+                  <option value="openrouter">OpenRouter</option>
+                  <option value="openai">OpenAI</option>
+                </select>
+              </label>
+
+              <label className="qa-field">
+                <span>Model</span>
+                <input
+                  value={model}
+                  onChange={(event) => setModel(event.target.value)}
+                  placeholder="e.g. openrouter/free"
+                  autoComplete="off"
+                  disabled={loading}
+                />
+              </label>
+            </div>
+
             <label className="qa-field">
-              <span>Company Name</span>
+              <span>API Key</span>
               <input
-                value={companyName}
-                onChange={(event) => setCompanyName(event.target.value)}
-                placeholder="e.g. Infosys"
-                required
+                type="password"
+                value={apiKey}
+                onChange={(event) => setApiKey(event.target.value)}
+                placeholder="Paste your provider API key"
+                autoComplete="new-password"
+                spellCheck={false}
                 disabled={loading}
               />
+              <small className="field-note">
+                Sent over HTTPS with this request. Finance QA does not save it.
+              </small>
             </label>
 
+            <div className="section-heading query-heading">
+              <span>Financial question</span>
+              <small>Company and question are required.</small>
+            </div>
+
+            <div className="provider-grid">
+              <label className="qa-field">
+                <span>Company</span>
+                <input
+                  value={companyName}
+                  onChange={(event) => setCompanyName(event.target.value)}
+                  placeholder="e.g. AAPL"
+                  required
+                  disabled={loading}
+                />
+              </label>
+
+              <label className="qa-field">
+                <span>Supporting documents <small>(optional)</small></span>
+                <input
+                  className="file-input"
+                  type="file"
+                  multiple
+                  onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    setFiles(Array.from(event.target.files ?? []))
+                  }
+                  disabled={loading}
+                />
+              </label>
+            </div>
+
             <label className="qa-field">
-              <span>Your Query</span>
+              <span>Your query</span>
               <textarea
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder="e.g. How resilient are the company’s earnings and cash generation?"
+                placeholder="Ask about revenue, margins, cash flow, capital allocation, valuation, or another financial topic."
                 rows={6}
                 required
                 disabled={loading}
               />
             </label>
 
-            <label className="qa-field">
-              <span>Supporting Documents <small>(optional)</small></span>
-              <input
-                type="file"
-                multiple
-                onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                  setFiles(Array.from(event.target.files ?? []))
-                }
-                disabled={loading}
-              />
-              {files.length > 0 && (
-                <small>{files.length} file{files.length === 1 ? "" : "s"} selected</small>
-              )}
-            </label>
+            {files.length > 0 && (
+              <div className="file-summary">
+                <span>{files.length} document{files.length === 1 ? "" : "s"} selected</span>
+                <span>{files.map((file) => file.name).join(" · ")}</span>
+              </div>
+            )}
 
-            <button type="submit" disabled={loading}>
-              {loading ? "Answering..." : "Ask Finance QA"}
-            </button>
-          </form>
+            {error && (
+              <div className="error-banner" role="alert">
+                {error}
+              </div>
+            )}
 
-          {error && (
-            <div className="error-banner" role="alert">
-              {error}
+            <div className="form-footer">
+              <div className="privacy-note">
+                <strong>Your key, your spend.</strong>
+                <span>Set limits directly with your provider.</span>
+              </div>
+              <button type="submit" className="primary-action" disabled={loading}>
+                {loading ? "Researching..." : "Ask Finance QA"}
+              </button>
             </div>
-          )}
+          </form>
 
           {answer && (
             <section className="answer-panel">
-              <div className="eyebrow">ANSWER</div>
-              <h2>{companyName}</h2>
-              <div className="answer-content"><ReactMarkdown remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown></div>
+              <div className="answer-header">
+                <div>
+                  <div className="eyebrow">ANSWER</div>
+                  <h2>{companyName}</h2>
+                </div>
+                <div className="model-chip">{provider} · {usedModel || model}</div>
+              </div>
+              <div className="answer-content markdown-content">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{answer}</ReactMarkdown>
+              </div>
             </section>
           )}
         </div>
