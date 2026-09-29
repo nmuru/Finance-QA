@@ -5,6 +5,7 @@ import CancelledReturnControl from "./cancelled-return-control";
 import V1WorkspaceDisplayControl from "./v1-workspace-display-control";
 import BackendCapacityControl from "./backend-capacity-control";
 import SessionExpiryControl from "./session-expiry-control";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Financial Analysis",
@@ -12,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><WorkspaceCloseControl /><CancelledReturnControl /><V1WorkspaceDisplayControl /><BackendCapacityControl /><SessionExpiryControl />{children}</body></html>;
+  return <html lang="en"><body><WorkspaceCloseControl /><CancelledReturnControl /><V1WorkspaceDisplayControl /><BackendCapacityControl /><SessionExpiryControl />{children}<Analytics /></body></html>;
 }

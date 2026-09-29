@@ -8,6 +8,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@vercel/analytics": "^2.0.1",
     "mermaid": "^11.17.2",
     "next": "latest",
     "react": "latest",
