@@ -258,11 +258,16 @@ async def analyze(request: Request) -> StreamingResponse:
         query = parsed.query.strip()
         requested_run_id = parsed.work_id
 
-    # Provider, model, and credentials are backend-owned. They are never accepted
-    # from the client, so Render/local environment configuration is authoritative.
-    provider = settings.model_provider.strip().lower()
-    model = settings.agent_model.strip()
-    api_key = settings.openrouter_api_key.strip()
+    # Provider, model, and credentials are supplied per request by the user.
+    # They are held in memory for the active run only and are never persisted.
+    if content_type.startswith("multipart/form-data"):
+        provider = str(form.get("provider") or "").strip().lower()
+        model = str(form.get("model") or "").strip()
+        api_key = str(form.get("api_key") or "").strip()
+    else:
+        provider = parsed.provider.strip().lower()
+        model = parsed.model.strip()
+        api_key = parsed.api_key.strip()
 
     event_queue: Queue[dict[str, Any]] = Queue()
 
@@ -270,6 +275,12 @@ async def analyze(request: Request) -> StreamingResponse:
         raise HTTPException(status_code=422, detail="company_name cannot be empty")
     if not query:
         raise HTTPException(status_code=422, detail="query cannot be empty")
+    if provider not in {"openrouter", "openai"}:
+        raise HTTPException(status_code=422, detail="Unsupported AI provider.")
+    if not model:
+        raise HTTPException(status_code=422, detail="model cannot be empty")
+    if not api_key:
+        raise HTTPException(status_code=422, detail="api_key cannot be empty")
 
     if requested_run_id:
         with _run_controls_lock:
