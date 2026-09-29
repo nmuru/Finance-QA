@@ -4,6 +4,9 @@ from pydantic import BaseModel, HttpUrl
 class AnalyzeRequest(BaseModel):
     company_name: str
     query: str = ""
+    provider: str = "openrouter"
+    model: str = "openrouter/free"
+    api_key: str = ""
     selected_phases: list[str] | None = None
     work_id: str | None = None
     mode: str = "parallel"
