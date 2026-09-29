@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     openrouter_model: str = ""
     openai_model: str = ""
     openai_api_key: str | None = None
-    allowed_origins: str = "http://localhost:3000"
+    allowed_origins: str = "https://finance-qa-phi.vercel.app"
     phases_per_batch: int = 1
     analysis_results_dir: str = "output-content"
     workspace_retention_hours: float = 5.0
