@@ -269,6 +269,14 @@ async def analyze(request: Request) -> StreamingResponse:
         model = parsed.model.strip()
         api_key = parsed.api_key.strip()
 
+    # Prefer BYOK, while retaining the existing hosted OpenRouter configuration
+    # as a fallback so existing deployments continue to work without a key in the UI.
+    if provider == "openrouter":
+        if not model:
+            model = settings.agent_model.strip() or "openrouter/free"
+        if not api_key:
+            api_key = settings.openrouter_api_key.strip()
+
     event_queue: Queue[dict[str, Any]] = Queue()
 
     if not company_name:
@@ -280,7 +288,7 @@ async def analyze(request: Request) -> StreamingResponse:
     if not model:
         raise HTTPException(status_code=422, detail="model cannot be empty")
     if not api_key:
-        raise HTTPException(status_code=422, detail="api_key cannot be empty")
+        raise HTTPException(status_code=422, detail="api_key cannot be empty. Enter your provider key or configure the server-side OpenRouter key.")
 
     if requested_run_id:
         with _run_controls_lock:
