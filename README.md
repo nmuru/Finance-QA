@@ -78,6 +78,22 @@ The application does not silently switch models when a provider or model fails. 
 
 Actual performance and token usage depend on the selected model, provider limits, agent instructions, retrieved evidence, and question difficulty.
 
+## Model and API key configuration
+
+The provider, model name, and API key are configured only on the backend. The frontend does not send or store AI credentials, and client-supplied provider/model/key values are not used by the analysis endpoint. The backend resolves the active configuration from environment variables.
+
+For Render, set these environment variables/secrets on the backend service:
+
+    OPENROUTER_API_KEY=your-openrouter-api-key
+    OPENROUTER_MODEL=openrouter/free
+
+For a local clone, create backend/.env with the same variables:
+
+    OPENROUTER_API_KEY=your-openrouter-api-key
+    OPENROUTER_MODEL=openrouter/free
+
+backend/.env is ignored by Git and should never be committed. This lets the same application use Render environment secrets in deployment and a developer's local .env during local development. The default provider remains OpenRouter.
+
 ## Local development
 
 This project is currently intended to run locally. It is **not deployed on Vercel**.
@@ -120,7 +136,7 @@ The backend normally runs at:
 
 **http://localhost:8000**
 
-Enter the company, financial question, provider/model configuration, and API key in the application as required by the current UI/settings.
+Enter the company and financial question in the application. Configure the model and API key in the backend environment as described above.
 
 ### Manual startup
 
