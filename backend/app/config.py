@@ -1,12 +1,11 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class Settings(BaseSettings):
+class Settings(BaseSettings): 
     model_provider: str = "openrouter"
-    openrouter_api_key: str = ""
-    openrouter_model: str = ""
-    openai_model: str = ""
-    openai_api_key: str | None = None
+    openai_model: str = "openrouter/free"
+    openrouter_api_key: str | None = None
+    openai_api_key: str | None = None 
     allowed_origins: str = "https://finance-qa-phi.vercel.app"
     phases_per_batch: int = 1
     analysis_results_dir: str = "output-content"
