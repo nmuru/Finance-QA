@@ -80,19 +80,21 @@ Actual performance and token usage depend on the selected model, provider limits
 
 ## Model and API key configuration
 
-The provider, model name, and API key are configured only on the backend. The frontend does not send or store AI credentials, and client-supplied provider/model/key values are not used by the analysis endpoint. The backend resolves the active configuration from environment variables.
+The V1 web UI uses **BYOK (Bring Your Own Key)**. Before running a query, the user selects a supported provider, enters a model ID, and supplies that provider's API key.
 
-For Render, set these environment variables/secrets on the backend service:
+Currently supported providers are:
 
-    OPENROUTER_API_KEY=your-openrouter-api-key
-    OPENROUTER_MODEL=openrouter/free
+- **OpenRouter**
+- **OpenAI**
 
-For a local clone, create backend/.env with the same variables:
+The API key is sent with the active request over HTTPS, held in memory while that request runs, and is not written to Finance QA's database, workspace, provenance, or frontend storage. Provider spending limits remain under the user's provider account.
 
-    OPENROUTER_API_KEY=your-openrouter-api-key
-    OPENROUTER_MODEL=openrouter/free
+For OpenRouter, a convenient model value for testing is:
 
-backend/.env is ignored by Git and should never be committed. This lets the same application use Render environment secrets in deployment and a developer's local .env during local development. The default provider remains OpenRouter.
+    openrouter/free
+
+The backend still retains its environment configuration for legacy/internal agent paths, but the public V1 `/api/analyze` endpoint uses the provider, model, and API key supplied with each request.
+
 
 ## Local development
 
