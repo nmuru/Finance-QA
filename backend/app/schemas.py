@@ -6,9 +6,6 @@ class AnalyzeRequest(BaseModel):
     query: str = ""
     selected_phases: list[str] | None = None
     work_id: str | None = None
-    provider: str = "openrouter"
-    model: str = "openrouter/free"
-    api_key: str = ""
     mode: str = "parallel"
     objective: str = "document"
 
