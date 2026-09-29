@@ -4,7 +4,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings): 
     model_provider: str = "openrouter"
     openai_model: str = "openrouter/free"
-    openrouter_api_key: str | None = None
+    # openrouter_api_key: str | None = None
     openai_api_key: str | None = None 
     allowed_origins: str = "https://finance-qa-phi.vercel.app"
     phases_per_batch: int = 1
@@ -19,9 +19,7 @@ class Settings(BaseSettings):
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 
-    @property
-    def agent_model(self) -> str:
-        return self.openrouter_model
+
 
 
 settings = Settings()
