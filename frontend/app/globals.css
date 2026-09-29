@@ -834,3 +834,251 @@ button {
   line-height: 1.7;
   white-space: pre-wrap;
 }
+
+
+/* V1 Finance QA / BYOK */
+.qa-card {
+  width: min(920px, 100%);
+  padding: 44px;
+}
+
+.hero-row {
+  margin-bottom: 28px;
+}
+
+.qa-card h1 {
+  max-width: 760px;
+  margin: 12px 0 14px;
+  font-size: clamp(30px, 5vw, 44px);
+  line-height: 1.04;
+  letter-spacing: -0.045em;
+}
+
+.byok-badge {
+  padding: 8px 12px;
+  border: 1px solid #d9e3f8;
+  border-radius: 999px;
+  background: #f5f8ff;
+  color: var(--accent);
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.section-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 4px;
+  padding-bottom: 2px;
+}
+
+.section-heading > span {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.section-heading > small {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.query-heading {
+  margin-top: 8px;
+}
+
+.provider-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.45fr);
+  gap: 14px;
+}
+
+.qa-field small {
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 400;
+}
+
+.qa-field select {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  border: 1px solid #cfd4da;
+  border-radius: 9px;
+  outline: none;
+  color: var(--text);
+  background: white;
+  font: inherit;
+}
+
+.qa-field input,
+.qa-field textarea,
+.qa-field select {
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+
+.qa-field input:focus,
+.qa-field textarea:focus,
+.qa-field select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.qa-field input:disabled,
+.qa-field textarea:disabled,
+.qa-field select:disabled {
+  background: #f6f7f9;
+  cursor: wait;
+}
+
+.field-note {
+  margin-top: 1px;
+}
+
+.file-input {
+  min-height: 46px;
+  padding: 11px 12px !important;
+}
+
+.file-summary {
+  display: grid;
+  gap: 3px;
+  padding: 11px 13px;
+  border: 1px solid var(--border);
+  border-radius: 9px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.file-summary span:first-child {
+  color: var(--text);
+  font-weight: 700;
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 4px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.privacy-note {
+  display: grid;
+  gap: 3px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.privacy-note strong {
+  color: var(--text);
+  font-size: 13px;
+}
+
+.primary-action {
+  min-height: 48px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--accent);
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(31, 94, 255, 0.18);
+}
+
+.primary-action:hover:not(:disabled) {
+  background: #174bd1;
+}
+
+.primary-action:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.error-banner {
+  padding: 12px 14px;
+  border: 1px solid #f0cccc;
+  border-radius: 9px;
+  background: #fff7f7;
+  color: #a33a3a;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.answer-panel {
+  margin-top: 32px;
+  padding: 26px;
+  border-radius: 14px;
+}
+
+.answer-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.answer-panel h2 {
+  margin: 5px 0 0;
+  font-size: 23px;
+}
+
+.model-chip {
+  max-width: 48%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding: 7px 10px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.answer-content {
+  color: #4f5863;
+}
+
+@media (max-width: 700px) {
+  .qa-card {
+    padding: 30px 22px;
+  }
+
+  .byok-badge {
+    display: none;
+  }
+
+  .provider-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  .form-footer,
+  .answer-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .primary-action {
+    width: 100%;
+  }
+
+  .model-chip {
+    max-width: 100%;
+    width: fit-content;
+  }
+}
