@@ -154,7 +154,7 @@ export default function Home() {
           <div className="hero-row">
             <div>
               <div className="eyebrow">FINANCE QA</div>
-              <h1>Ask a financial question. Let the agent find the evidence.</h1>
+              <h1>Agentic RAG for financial Q&A and benchmark evaluation</h1>
               <p className="landing-copy">
                 Finance QA retrieves targeted financial evidence, works through the question, and returns a concise answer with the relevant figures and periods.
               </p>
